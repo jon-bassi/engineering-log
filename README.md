@@ -3,7 +3,7 @@ This is a general purpose, inventory management database, frontend application, 
 
 The tools provided in this application are specific to the purpose I built it for, however documentation has been provided within the code which should make any additions relatively painless.
 
-Note also that the software was written for a specific purpose on a specific network, and due to this will not run "as-is" unless the necessarry steps that follow are taken:
+Note also that the software was written for a specific purpose on a specific network, and due to this will not run "as-is" unless the neccessary steps that follow are taken:
   1. the creation of a "data.dat" file or the renaming of this specific reference found in the EngDB.java source file. This file is to contain the following on seperate lines:
 
   
