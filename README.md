@@ -1,7 +1,26 @@
 # engineering-log
-This is a general purpose, inventory management database, frontend application, developed for use on Windows machines in a business enviornment.
+This is a general purpose, inventory management database, frontend application, developed for use on Windows machines. The Application's intent is to use barcodes to lable different pieces of equipment, allowing the check-in/check-out process to run smoothly and efficently. The Application was built as an alternative to using pen and paper to document and note when a person checks an item out, as this form of transcribing information to paper is susceptible to human error and the misplacement of forms documenting the transferring of responsibility for the equipment at hand.
 
 The tools provided in this application are specific to the purpose I built it for, however documentation has been provided within the code which should make any additions relatively painless.
+
+Note also that the software was written for a specific purpose on a specific network, and due to this will not run "as-is" unless the necessarry steps that follow are taken:
+  1. the creation of a "data.dat" file or the renaming of this specific reference found in the EngDB.java source file. This file is to contain the following on seperate lines:
+
+  
+    a. jdbc:mysql://ipOfServerOnNetwork/databaseName
+    
+    b. MySQL username
+    
+    c. MySQL password
+
+  2. the removal of the login menu command or the creation of a "paths.dat" file referenced in the DeskAppController.java file containing the followng:
+ 
+  
+    a. powershell.exe \"& 'pathTo.exeOnNetwork.exe'\"  OR
+
+    b. powershell.exe \" javaw -jar 'pathTo.jarOnNetwork.jar'\"
+
+  depending on how the program has been packaged.
 
 All jar files under "Releases" repackage MySQL Libraries, licensed under GPL.
 More information on MySQL and their avalible libraries is avalible at http://www.mysql.com/
