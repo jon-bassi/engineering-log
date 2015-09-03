@@ -3,6 +3,9 @@ This is a general purpose, inventory management database, frontend application, 
 
 The tools provided in this application are specific to the purpose I built it for, however documentation has been provided within the code which should make any additions relatively painless.
 
+All jar files under "Releases" repackage MySQL Libraries, licensed under GPL.
+More information on MySQL and their avalible libraries is avalible at http://www.mysql.com/
+
 _____________
 THIS SOFTWARE IS LICENSED UNDER GNU GENERAL PUBLIC LICENSE AS STATED BELOW
 ____________
