@@ -29,6 +29,7 @@ import javafx.scene.control.TextField;
  *        -look at Check Out Item method for correct algorithm
  *        -selecting to add to a new job and then typing in an existing job number
  *         shows error even though it worked
+ *        -testing remote branch
  * @author jon-bassi
  *
  */
