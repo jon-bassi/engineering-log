@@ -1,4 +1,4 @@
-package io.github.jon_bassi;
+package io.github.jon_bassi.view;
 
 import java.util.Optional;
 
@@ -22,7 +22,7 @@ public class ScanningHandler
     * allows for scanning or input of item
     * @return
     */
-   protected static String scan()
+   public static String scan()
    {
       Alert alert = new Alert(AlertType.INFORMATION);
       alert.setTitle("Scan");
@@ -44,9 +44,9 @@ public class ScanningHandler
       
       if (result.get() == ButtonType.OK)
       {
-         return id.getText();
+         return id.getText().toUpperCase();
          
       }  
-      return id.getText();
+      return id.getText().toUpperCase();
       }
    }

@@ -2,6 +2,9 @@ package io.github.jon_bassi;
 
 import io.github.jon_bassi.db.objects.Equipment;
 import io.github.jon_bassi.db.objects.Job;
+import io.github.jon_bassi.view.ExceptionHandler;
+import io.github.jon_bassi.view.ScanningHandler;
+import io.github.jon_bassi.view.WindowHandler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,12 +27,11 @@ import javafx.scene.control.TextField;
  * TODO : -prepare for job type selection (items are a part of a type, types need a certain
  *         amount of items
  *        -make sure items which are broken are attributed to admin???
- *        -add personal item checkout to scan item
- *        -automatically fill in text based on user account
  *        -look at Check Out Item method for correct algorithm
  *        -selecting to add to a new job and then typing in an existing job number
  *         shows error even though it worked
- *        -testing remote branch
+ *        -add last calibration date to calibration form
+ *        -replace all throws with try catch to Exception handler
  * @author jon-bassi
  *
  */
@@ -473,15 +475,23 @@ public class deskAppController implements Initializable
     * @throws SQLException 
     */
    @ FXML
-   public void logout() throws IOException, SQLException
+   public void logout() 
    {
-      Main.database.disconnect();
-      Scanner file = new Scanner(new File("paths.dat"));
-      String command = file.nextLine();
-      file.close();
-      @SuppressWarnings("unused")
-      Process p = Runtime.getRuntime().exec(command);
-      System.exit(0);
+      try
+      {
+         Main.database.disconnect();
+         Scanner file = new Scanner(new File("paths.dat"));
+         String command = file.nextLine();
+         file.close();
+         @SuppressWarnings("unused")
+         Process p = Runtime.getRuntime().exec(command);
+         System.exit(0);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+         System.exit(0);
+      }
+      
    }
    
    /**

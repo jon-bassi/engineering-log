@@ -1,5 +1,8 @@
 package io.github.jon_bassi;
 
+import io.github.jon_bassi.view.ExceptionHandler;
+import io.github.jon_bassi.view.WindowHandler;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -80,22 +83,24 @@ public class Main extends Application
       // load main GUI
       try {
          Parent root = FXMLLoader.load(getClass().getResource("/io/github/jon_bassi/deskApp.fxml"));
-         primaryStage.setTitle(user + " - HDR Engineering Equipment Database");
+         primaryStage.setTitle(user + " - Engineering Equipment Database");
          Scene scene = new Scene(root,1150,720);
          primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() 
          {
-            public void handle(WindowEvent e){
+            public void handle(WindowEvent we){
                try {
                   System.exit(0);
-                 } catch (Exception e1) {
-                    e1.printStackTrace();
+                 } catch (Exception e) {
+                    ExceptionHandler.displayException(e);
+                    System.exit(0);
                  }
              }
           });
          primaryStage.setScene(scene);
          primaryStage.show();
       } catch (Exception e) {
-         e.printStackTrace();
+         ExceptionHandler.displayException(e);
+         System.exit(0);
       }
       
    }
