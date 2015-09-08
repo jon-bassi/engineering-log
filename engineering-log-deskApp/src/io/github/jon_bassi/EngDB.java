@@ -739,11 +739,7 @@ public class EngDB
       stmt.setTimestamp(7, new Timestamp(0L));
       stmt.setString(8, toCreate.getComments());
       stmt.setLong(9, toCreate.getCalibrationinterval());
-      if (toCreate.getCalibrationinterval() == 0)
-         stmt.setString(10, new Timestamp(0L).toString());
-      else
-         stmt.setTimestamp(10, new Timestamp(System.currentTimeMillis() 
-               + toCreate.getCalibrationinterval()));
+      stmt.setDate(10, toCreate.getNextcalibrationdate());
       
       stmt.executeUpdate();
    }

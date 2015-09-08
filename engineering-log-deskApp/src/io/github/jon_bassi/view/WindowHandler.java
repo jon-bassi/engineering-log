@@ -6,6 +6,8 @@ import io.github.jon_bassi.db.objects.Job;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.Optional;
 
 import javafx.application.Platform;
@@ -520,7 +522,6 @@ public class WindowHandler
       Label dateLabel = new Label("Last date of Calibration:");
       DatePicker lastCalibration = new DatePicker();
       
-      
       grid2.add(numbers, 0, 0);
       grid2.add(units, 1, 0);
       grid2.add(dateLabel, 0, 1);
@@ -554,7 +555,18 @@ public class WindowHandler
             units.getSelectionModel().select("day(s)");
          }
          
-         // set date on last calibration
+         if (toEdit.getCalibrationinterval() != 0)
+         {
+            Long dateTime = toEdit.getNextcalibrationdate().getTime();
+            dateTime -= toEdit.getCalibrationinterval();
+            dateTime /= 86400000;
+            dateTime += 1;  // the date was off by one due to either a rounding
+                            // error or because this doesn't take into account the
+                            // first day being 0
+            
+            LocalDate date = LocalDate.ofEpochDay(dateTime);
+            lastCalibration.setValue(date);
+         }
       }
       
       
@@ -581,12 +593,19 @@ public class WindowHandler
             default: toCreate.setReady(false);
                      return toCreate;
          }
-         
-         
-         
-         // number of seconds to add to current time
          seconds *= 1000;
          toCreate.setCalibrationinterval(seconds);
+         
+         if (seconds != 0)
+         {
+            Long lastCalibrationTime = lastCalibration.getValue().getLong(ChronoField.EPOCH_DAY) * 86400000;
+            toCreate.setNextcalibrationdate(new Date(lastCalibrationTime + seconds));
+         }
+         else
+         {
+            toCreate.setNextcalibrationdate(new Date(0));
+         }
+         
          toCreate.setReady(true);
          return toCreate;
       }
