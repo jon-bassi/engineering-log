@@ -49,11 +49,14 @@ public class EngDB
          con = DriverManager.getConnection(url, username, pass);
          System.out.println("conn built");
          
-      } catch (SQLException e) {
+      } catch (SQLException e)
+      {
          e.printStackTrace();
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException e)
+      {
          e.printStackTrace();
-      } catch (IOException e) {
+      } catch (IOException e)
+      {
          e.printStackTrace();
       }
    }
