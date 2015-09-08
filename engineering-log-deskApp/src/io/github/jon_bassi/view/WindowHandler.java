@@ -5,7 +5,6 @@ import io.github.jon_bassi.db.objects.Equipment;
 import io.github.jon_bassi.db.objects.Job;
 
 import java.sql.Date;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.util.Optional;
@@ -183,8 +182,11 @@ public class WindowHandler
       return 0;
    }
    
-   
-   public static String displayUserChooser() throws SQLException
+   /**
+    * 
+    * @return
+    */
+   public static String displayUserChooser()
    {
       Alert alert = new Alert(AlertType.NONE);
       alert.setTitle("Create New User");
@@ -669,9 +671,8 @@ public class WindowHandler
    /**
     * 
     * @return
-    * @throws SQLException
     */
-   public static int displayJobChooser() throws SQLException
+   public static int displayJobChooser()
    {
       Alert alert = new Alert(AlertType.NONE);
       alert.setTitle("Choose an Existing Job");

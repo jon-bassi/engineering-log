@@ -7,10 +7,7 @@ import io.github.jon_bassi.view.ScanningHandler;
 import io.github.jon_bassi.view.WindowHandler;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -30,7 +27,6 @@ import javafx.scene.control.TextField;
  *        -look at Check Out Item method for correct algorithm
  *        -selecting to add to a new job and then typing in an existing job number
  *         shows error even though it worked
- *        -add last calibration date to calibration form
  *        -replace all throws with try catch to Exception handler
  * @author jon-bassi
  *
@@ -195,7 +191,7 @@ public class deskAppController implements Initializable
     * changes the information in the top-right info panel based on
     * selection in either list
     */
-   public void viewCurrInfo() throws SQLException, FileNotFoundException, ClassNotFoundException, IOException
+   public void viewCurrInfo()
    {
       // get the information from db
       Main.database.reconnect();
@@ -245,12 +241,8 @@ public class deskAppController implements Initializable
    /**
     * Search algorithm for the equipment search tab, pretty basic all terms within the
     * text field use OR functionality while searching the database, not AND
-    * @throws SQLException 
-    * @throws IOException 
-    * @throws ClassNotFoundException 
-    * @throws FileNotFoundException 
     */
-   public void equipmentSearch() throws SQLException, FileNotFoundException, ClassNotFoundException, IOException
+   public void equipmentSearch()
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
@@ -302,12 +294,8 @@ public class deskAppController implements Initializable
    
    /**
     * sets the info for the selected items on the checked out (all) page
-    * @throws SQLException 
-    * @throws IOException 
-    * @throws ClassNotFoundException 
-    * @throws FileNotFoundException 
     */
-   public void setCheckedOutInfo() throws SQLException, FileNotFoundException, ClassNotFoundException, IOException
+   public void setCheckedOutInfo()
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
@@ -358,12 +346,8 @@ public class deskAppController implements Initializable
    
    /**
     * sets the info for the selected items on the past due page
-    * @throws IOException 
-    * @throws SQLException 
-    * @throws ClassNotFoundException 
-    * @throws FileNotFoundException 
     */
-   public void setPastDueInfo() throws FileNotFoundException, ClassNotFoundException, SQLException, IOException
+   public void setPastDueInfo()
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
@@ -414,12 +398,8 @@ public class deskAppController implements Initializable
    
    /**
     * sets the info for the selected item on the search page
-    * @throws SQLException
-    * @throws FileNotFoundException
-    * @throws ClassNotFoundException
-    * @throws IOException
     */
-   public void setSearchedInfo() throws SQLException, FileNotFoundException, ClassNotFoundException, IOException
+   public void setSearchedInfo()
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
@@ -471,8 +451,6 @@ public class deskAppController implements Initializable
    
    /**
     * returns to the login screen - this is really hack-y, sorry
-    * @throws IOException 
-    * @throws SQLException 
     */
    @ FXML
    public void logout() 
@@ -507,7 +485,7 @@ public class deskAppController implements Initializable
    /**
     * refreshes every list (or so I hope)
     */
-   public void refresh() throws FileNotFoundException, ClassNotFoundException, SQLException, IOException
+   public void refresh()
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
@@ -521,7 +499,7 @@ public class deskAppController implements Initializable
    /**
     * Allows for the editing of information for a specific item
     */
-   public void editItem() throws FileNotFoundException, ClassNotFoundException, SQLException, IOException
+   public void editItem()
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
@@ -574,7 +552,7 @@ public class deskAppController implements Initializable
    /**
     * Allows for the editing of information for a specific job
     */
-   public void editJob() throws FileNotFoundException, ClassNotFoundException, SQLException, IOException
+   public void editJob()
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
@@ -622,7 +600,7 @@ public class deskAppController implements Initializable
    /**
     * checks in or out the selected item depending on the equipment's job and status
     */
-   public void checkInOutSelected() throws SQLException, FileNotFoundException, ClassNotFoundException, IOException
+   public void checkInOutSelected()
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
@@ -835,7 +813,7 @@ public class deskAppController implements Initializable
    /**
     * Called when Single Item Button is pressed - checks out item or adds to DB
     */
-   public void checkOutItem() throws SQLException, FileNotFoundException, ClassNotFoundException, IOException
+   public void checkOutItem()
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
@@ -984,7 +962,7 @@ public class deskAppController implements Initializable
    /**
     * Called when Multiple Item Button is pressed - checks out items or adds all to DB
     */
-   public void checkOutItems() throws SQLException, FileNotFoundException, ClassNotFoundException, IOException
+   public void checkOutItems()
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
@@ -1127,14 +1105,7 @@ public class deskAppController implements Initializable
    {
       checkedOutList.getItems().clear();
       ArrayList<String> checkedOut = new ArrayList<String>();
-      
-      try
-      {
-         checkedOut = Main.database.getCheckedOutItems();
-      } catch (SQLException e)
-      {
-         e.printStackTrace();
-      }
+      checkedOut = Main.database.getCheckedOutItems();
       
       // each item is a concatenation of the id (barcode) and name so that
       // i can use that info later (it's possible for there to be items of the same
@@ -1148,13 +1119,7 @@ public class deskAppController implements Initializable
       
       checkedOutList.getSelectionModel().select(0);
       
-      try
-      {
-            setCurrInfo();
-      } catch (SQLException e)
-      {
-         e.printStackTrace();
-      }
+      setCurrInfo();
    }
    
    /**
@@ -1162,17 +1127,10 @@ public class deskAppController implements Initializable
     */
    private void updateCalibrations()
    {
-      ArrayList<String> calibrations = new ArrayList<>();
+      ArrayList<String> calibrations = new ArrayList<>()
+            ;
       // find items with calibration date soon or passed
-      try
-      {
       calibrations = Main.database.getItemsToCalibrate();
-      } catch (SQLException e)
-      {
-         e.printStackTrace();
-      }
-      // add these items to job 2 (need calibration job)
-      //Main.database.updateCalibrationJob(calibrations);
       
       // display these items on the GUI
       calibrationList.getItems().clear();
@@ -1181,18 +1139,13 @@ public class deskAppController implements Initializable
    }
    
    /**
-    * 
+    * updates the list of all past due equipment
     */
    private void updatePastDue()
    {
       ArrayList<String> allPastDue = new ArrayList<>();
-      try
-      {
-         allPastDue = Main.database.getAllCheckedOutPastDue();
-      } catch (SQLException e)
-      {
-         e.printStackTrace();
-      }
+      
+      allPastDue = Main.database.getAllCheckedOutPastDue();
       
       pastDueAll.getItems().clear();
       for (String s : allPastDue)
@@ -1205,13 +1158,8 @@ public class deskAppController implements Initializable
    private void updateCheckedOutAll()
    {
       ArrayList<String> allCheckedOut = new ArrayList<>();
-      try
-      {
-         allCheckedOut = Main.database.getAllCheckedOut();
-      } catch (SQLException e)
-      {
-         e.printStackTrace();
-      }
+      
+      allCheckedOut = Main.database.getAllCheckedOut();
       
       checkedOutAll.getItems().clear();
       for (String s : allCheckedOut)
@@ -1220,9 +1168,8 @@ public class deskAppController implements Initializable
    
    /**
     * sets info on startup (workaround because it stays as placeholder text for some reason)
-    * @throws SQLException 
     */
-   private void setCurrInfo() throws SQLException
+   private void setCurrInfo()
    {
       String name = checkedOutList.getSelectionModel().getSelectedItem();
       if (name == null || name.equals("") || name.equals(null))
@@ -1279,9 +1226,8 @@ public class deskAppController implements Initializable
     * Calls the GUI for the creation of new equipment
     * @param id
     * @return
-    * @throws SQLException 
     */
-   private Equipment createNewItem(Equipment toCreate) throws SQLException
+   private Equipment createNewItem(Equipment toCreate)
    {
       toCreate = WindowHandler.displayNewEquipmentPane(toCreate);
       if (!toCreate.isReady())
@@ -1298,9 +1244,8 @@ public class deskAppController implements Initializable
    /**
     * Automatically checks in an item to the admin and creates an audit trail entry
     * @param id barcode id of the item
-    * @throws SQLException
     */
-   private void autoCheckIn(String id) throws SQLException
+   private void autoCheckIn(String id)
    {
       Main.database.updateItemCheckIn(id);
       
@@ -1310,9 +1255,8 @@ public class deskAppController implements Initializable
    
    /**
     * allows the user to create a new job for their items
-    * @throws SQLException 
     */
-   private Job chooseNewJob() throws SQLException
+   private Job chooseNewJob()
    {
       Job toCreate = WindowHandler.displayNewJobPane(new Job());
       
@@ -1340,7 +1284,7 @@ public class deskAppController implements Initializable
       return toCreate;
    }
    
-   private Job chooseExistingJob() throws SQLException
+   private Job chooseExistingJob()
    {
       int dbrefnum = WindowHandler.displayJobChooser();
       Job toEdit = new Job();

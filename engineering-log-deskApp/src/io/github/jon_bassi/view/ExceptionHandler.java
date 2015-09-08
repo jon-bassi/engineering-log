@@ -12,6 +12,13 @@ import javafx.scene.layout.Priority;
 
 public class ExceptionHandler
 {
+   /**
+    * displays the stack trace for an exception and exits the program once the user presses OK.
+    * Allows useful information to be sent to me if there is an issue.
+    * Since this method takes the initiative to exit the program and other logic after an exception is
+    * caught using this method will not be executed
+    * @param e Exception to display
+    */
    public static void displayException(Exception e)
    {
       Alert alert = new Alert(AlertType.ERROR);
