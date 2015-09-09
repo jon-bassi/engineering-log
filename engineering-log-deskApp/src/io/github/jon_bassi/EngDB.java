@@ -755,7 +755,7 @@ public class EngDB
          
          for (Equipment e : toEdit.getEquipment())
          {
-            updateItemInfo(e.getId(),toEdit.getDbrefnum(),toEdit.getReturnDate());
+            updateItemInfo(e,toEdit.getDbrefnum(),toEdit.getReturnDate());
          }
       } catch (SQLException e)
       {
@@ -813,8 +813,8 @@ public class EngDB
    {
       try {
          String sql = "UPDATE equipment SET dbrefnum = '"  + toEdit.getDbrefnum() + "'"
-               + ", name = (?), manufacturer = (?)"
-               + ", currentuser = (?), estimatedreturn = (?), comments = (?), calibrationinterval = (?)"
+               + ", name = (?), manufacturer = (?), currentuser = (?), checkedout = (?)"
+               + ", estimatedreturn = (?), comments = (?), calibrationinterval = (?)"
                + ", nextcalibrationdate = (?) WHERE id = '" + toEdit.getId() + "'";
          
          PreparedStatement stmt = con.prepareStatement(sql);
@@ -822,13 +822,17 @@ public class EngDB
          stmt.setString(1, toEdit.getName());
          stmt.setString(2, toEdit.getManufacturer());
          stmt.setString(3, toEdit.getCurrentuser());
-         stmt.setDate(4, toEdit.getEstimatedreturn());
-         stmt.setString(5, toEdit.getComments());
-         stmt.setLong(6, toEdit.getCalibrationinterval());
-         if (toEdit.getCalibrationinterval() == 0)
-            stmt.setDate(7, new Date(0L));
+         if (toEdit.getCheckedout().getTime() == 0)
+            stmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
          else
-            stmt.setDate(7, toEdit.getNextcalibrationdate());
+            stmt.setTimestamp(4, toEdit.getCheckedout());
+         stmt.setDate(5, toEdit.getEstimatedreturn());
+         stmt.setString(6, toEdit.getComments());
+         stmt.setLong(7, toEdit.getCalibrationinterval());
+         if (toEdit.getCalibrationinterval() == 0)
+            stmt.setDate(8, new Date(0L));
+         else
+            stmt.setDate(8, toEdit.getNextcalibrationdate());
          
          stmt.executeUpdate();
       } catch (SQLException e)
@@ -846,15 +850,17 @@ public class EngDB
     * @param dbrefnum
     * @param time
     */
-   private void updateItemInfo(String id, int dbrefnum, Date returndate)
+   private void updateItemInfo(Equipment eq, int dbrefnum, Date returndate)
    {
       try
       {
-         insertAudit(id,dbrefnum,"admin",Main.user);
+         insertAudit(eq.getId(),dbrefnum,"admin",Main.user);
+         if (eq.getCheckedout().getTime() == 0)
+            eq.setCheckedout(new Timestamp(System.currentTimeMillis()));
          String sql = "UPDATE equipment SET dbrefnum = '" + dbrefnum + "',"
                + "currentuser = '" + Main.user + "', checkedout"
-               + " = '" + new Timestamp(System.currentTimeMillis()) + "', estimatedreturn ="
-               + " '" + returndate + "' WHERE id = '" + id + "'";
+               + " = '" + eq.getCheckedout() + "', estimatedreturn ="
+               + " '" + returndate + "' WHERE id = '" + eq.getId() + "'";
          PreparedStatement stmt = con.prepareStatement(sql);
          stmt.execute();
       } catch (SQLException e)
@@ -947,15 +953,15 @@ public class EngDB
          stmt.setInt(1, dbrefnum);
          stmt.setString(2,id);
          
-         // get projname from database, using job id
-         ResultSet rs = runSql("SELECT projname FROM jobs WHERE dbrefnum = " + dbrefnum);
+         // get projname from database, using job dbrefnum
+         ResultSet rs = runSql("SELECT projname FROM jobs WHERE dbrefnum = '" + dbrefnum + "'");
          String projname = "";
          if (rs.next())
             projname = rs.getString(1);
          stmt.setString(3, projname);
          
          // get equipment name from db using equipmentid
-         rs = runSql("SELECT name FROM equipment WHERE id = " + id);
+         rs = runSql("SELECT name FROM equipment WHERE id = '" + id + "'");
          String equipname = "";
          if (rs.next())
             equipname = rs.getString(1);
@@ -1007,6 +1013,39 @@ public class EngDB
       {
          ExceptionHandler.displayException(e);
       }
+   }
+   
+   /**
+    * 
+    * @param search
+    * @return
+    */
+   public ArrayList<String> search(String search)
+   {
+      try
+      {
+         String sql = "SELECT * FROM equipment WHERE name LIKE '%" + search + "%' OR "
+               + " manufacturer LIKE '%" + search + "%' OR id LIKE '%" + search + "%'";
+         
+         ResultSet rs = runSql(sql);
+         TreeSet<String> results = new TreeSet<>();
+         
+         while (rs.next())
+         {
+            for (int i = 0; i < rs.getMetaData().getColumnCount(); i++)
+            {
+               results.add(rs.getString(i+1));
+            }
+         }
+         return getAllSearched(results);
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      return null;
    }
    
    /**

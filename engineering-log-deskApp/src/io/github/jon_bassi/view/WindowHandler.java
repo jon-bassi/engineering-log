@@ -329,6 +329,9 @@ public class WindowHandler
       grid.add(numbers, 0, 0);
       grid.add(units, 1, 0);
       
+      numbers.getSelectionModel().select(0);
+      units.getSelectionModel().select(0);
+      
       if (toEdit.getReturnDate() != null && toEdit.getDbrefnum() != -1)
       {
          Long time = toEdit.getReturnDate().getTime() - toEdit.getDatetime().getTime();
@@ -423,6 +426,7 @@ public class WindowHandler
       
       if (result.get() == submit)
       {
+         toCreate.setReady(true);
          toCreate.setComments(comments.getText());
          toCreate.setUsername(Main.user);
          return toCreate;

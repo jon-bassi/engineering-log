@@ -11,7 +11,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Scanner;
-import java.util.TreeSet;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -25,9 +24,11 @@ import javafx.scene.control.TextField;
  *         amount of items
  *        -make sure items which are broken are attributed to admin???
  *        -look at Check Out Item method for correct algorithm
- *        -selecting to add to a new job and then typing in an existing job number
- *         shows error even though it worked
- *        -replace all throws with try catch to Exception handler
+ *        -look in to mySQL events
+ *        -changing date from check in out selected does nothing
+ *        -when adding item to a job the other items are not updated (estimated return)
+ *        -multiple items still suffers from error single item did
+ *        -searching returns extra items (i think it has to do with manufacturer)
  * @author jon-bassi
  *
  */
@@ -241,6 +242,7 @@ public class deskAppController implements Initializable
    /**
     * Search algorithm for the equipment search tab, pretty basic all terms within the
     * text field use OR functionality while searching the database, not AND
+    * TODO : replace with SQL Wildcard Search
     */
    public void equipmentSearch()
    {
@@ -248,42 +250,13 @@ public class deskAppController implements Initializable
       lastUpdate = System.currentTimeMillis();
       
       String searchString = searchField.getText();
-      
       if (searchString.contains("-"))
       {
          searchString = searchString.substring(searchString.lastIndexOf('-'), searchString.length());
       }
       searchString = searchString.toLowerCase();
-      String[] searchStrings = searchString.split(" ");
-      ArrayList<String> dbStrings = Main.database.getAllStrings();
-      TreeSet<String> results = new TreeSet<>();
       
-      for (String s : dbStrings)
-      {
-         if (s.equalsIgnoreCase(searchString))
-            results.add(s);
-         else if (s.contains(searchString))
-            results.add(s);
-         else if (s.toLowerCase().contains(searchString))
-            results.add(s);
-         else
-         {
-            String[] splitS = s.split(" ");
-            for (String split : splitS)
-            {
-               split = split.substring(1, split.length());
-               
-               for (String ssSplit : searchStrings)
-               {
-                  String tempSS = ssSplit.substring(1, ssSplit.length());
-                  if (split.equals(tempSS) || split.contains(tempSS))
-                     results.add(s);
-               }
-            }
-         }
-      }
-      
-      ArrayList<String> itemResults = Main.database.getAllSearched(results);
+      ArrayList<String> itemResults = Main.database.search(searchString);
       
       searchResults.getItems().clear();
       for (String s : itemResults)
@@ -770,7 +743,6 @@ public class deskAppController implements Initializable
                break;
          /**
           * Default - this option is available to everyone
-          * TODO : should I change time for all items in this job, yes - idk
           */
          default : String[] a4 = {"Check In","Edit Info"};
             int choice4 = WindowHandler.displayConfirmDialog("You currently have this item checked out, would you like "
@@ -791,20 +763,12 @@ public class deskAppController implements Initializable
             // checked out - edit
             else if (choice4 == 2)
             {
-//               String idCheck = scanItem();
-//               if (idCheck.equals(id))
-//               {
-//                  
-//               }
-               // scanning made optional right now, may add back in later
                Equipment toAdd = new Equipment(Main.database.getItemInfo(id));
                Job toEdit = new Job(Main.database.getJobInfo(toAdd.getDbrefnum()));
                
                toEdit = WindowHandler.displayNewJobPane(toEdit);
-               toEdit.setEquipment(Main.database.getItemsForJob(toEdit.getDbrefnum()));
                Main.database.updateExistingJob(toEdit);
             }
-            
             break;
       }
    }
@@ -986,13 +950,13 @@ public class deskAppController implements Initializable
             scans.remove(id);
             i--;
          }
-         if (!Main.database.checkEquipmentCalibration(id))
+         if (Main.database.checkEquipmentCalibration(id))
          {
             unavalible.add(id);
             scans.remove(id);
             i--;
          }
-         if (!Main.database.checkEquipmentBroken(id))
+         if (Main.database.checkEquipmentBroken(id))
          {
             unavalible.add(id);
             scans.remove(id);
@@ -1269,9 +1233,12 @@ public class deskAppController implements Initializable
                + "job number?", 2, buttonNames);
          if (choice == 1)
          {
+            toCreate.setDbrefnum(Main.database.getJobDBrefnum(toCreate.getProjectnumber()));
+            toCreate.setEquipment(Main.database.getItemsForJob(toCreate.getDbrefnum()));
             toCreate = WindowHandler.displayNewJobPane(toCreate);
+            return toCreate;
          }
-         if (choice == 2)
+         else if (choice == 2)
          {
             toCreate = WindowHandler.displayNewJobPane(toCreate);
          }
