@@ -28,7 +28,6 @@ import javafx.scene.control.TextField;
  *        -changing date from check in out selected does nothing
  *        -when adding item to a job the other items are not updated (estimated return)
  *        -multiple items still suffers from error single item did
- *        -searching returns extra items (i think it has to do with manufacturer)
  * @author jon-bassi
  *
  */

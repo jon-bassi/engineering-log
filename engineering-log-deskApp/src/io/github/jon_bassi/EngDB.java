@@ -387,53 +387,6 @@ public class EngDB
    }
    
    /**
-    * returns the id manufacturer name of each item contained in the results set from
-    * our search algorithm
-    * @param results
-    * @return
-    */
-   public ArrayList<String> getAllSearched(TreeSet<String> results) 
-   {
-      try
-      {
-         ArrayList<String> items = new ArrayList<String>();
-         TreeSet<String> checkedInItems = new TreeSet<String>();
-         TreeSet<String> checkedOutItems = new TreeSet<String>();
-         
-         for (String s : results)
-         {
-            String sql = "SELECT id,name,manufacturer,currentuser FROM equipment WHERE id = '" + s + "'"
-                  + " OR name = '" + s + "' OR manufacturer = '" + s + "'";
-            ResultSet rs = runSql(sql);
-            
-            while (rs.next())
-            {
-               String rsString = rs.getString(1) + " " + rs.getString(3) + " " + rs.getString(2);
-               if (rs.getString(4).equals("admin"))
-                  checkedInItems.add(rsString);
-               else if (!checkedInItems.contains(rsString))
-               {
-                  checkedOutItems.add(rsString);
-               }
-            }
-         }
-         items.add("Checked In");
-         items.addAll(checkedInItems);
-         items.add("Checked Out");
-         items.addAll(checkedOutItems);
-         
-         return items;
-      } catch (SQLException e)
-      {
-         ExceptionHandler.displayException(e);
-      } catch (Exception e)
-      {
-         ExceptionHandler.displayException(e);
-      }
-      return null;
-   }
-   
-   /**
     * returns information for a specific item
     * @return [id,dbrefnum,name,manufacturer,currentuser,checkedout,estimatedreturn,comments
     * calibrationinterval,nextcalibraitondate]
@@ -1024,7 +977,7 @@ public class EngDB
    {
       try
       {
-         String sql = "SELECT * FROM equipment WHERE name LIKE '%" + search + "%' OR "
+         String sql = "SELECT id FROM equipment WHERE name LIKE '%" + search + "%' OR "
                + " manufacturer LIKE '%" + search + "%' OR id LIKE '%" + search + "%'";
          
          ResultSet rs = runSql(sql);
@@ -1037,7 +990,53 @@ public class EngDB
                results.add(rs.getString(i+1));
             }
          }
-         return getAllSearched(results);
+         return searchIDs(results);
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      return null;
+   }
+   
+   /**
+    * returns the id manufacturer name of each item contained in the results set from
+    * our search algorithm
+    * @param results
+    * @return
+    */
+   private ArrayList<String> searchIDs(TreeSet<String> results) 
+   {
+      try
+      {
+         ArrayList<String> items = new ArrayList<String>();
+         TreeSet<String> checkedInItems = new TreeSet<String>();
+         TreeSet<String> checkedOutItems = new TreeSet<String>();
+         
+         for (String s : results)
+         {
+            String sql = "SELECT id,name,manufacturer,currentuser FROM equipment WHERE id = '" + s + "'";
+            ResultSet rs = runSql(sql);
+            
+            while (rs.next())
+            {
+               String rsString = rs.getString(1) + " " + rs.getString(3) + " " + rs.getString(2);
+               if (rs.getString(4).equals("admin"))
+                  checkedInItems.add(rsString);
+               else if (!checkedInItems.contains(rsString))
+               {
+                  checkedOutItems.add(rsString);
+               }
+            }
+         }
+         items.add("Checked In");
+         items.addAll(checkedInItems);
+         items.add("Checked Out");
+         items.addAll(checkedOutItems);
+         
+         return items;
       } catch (SQLException e)
       {
          ExceptionHandler.displayException(e);
