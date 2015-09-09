@@ -24,7 +24,7 @@ import javafx.scene.control.TextField;
  *         amount of items
  *        -make sure items which are broken are attributed to admin???
  *        -look at Check Out Item method for correct algorithm
- *        -look in to mySQL events
+ *        -set up batch file for db backups
  *        -changing date from check in out selected does nothing
  *        -when adding item to a job the other items are not updated (estimated return)
  *        -multiple items still suffers from error single item did
@@ -241,7 +241,6 @@ public class deskAppController implements Initializable
    /**
     * Search algorithm for the equipment search tab, pretty basic all terms within the
     * text field use OR functionality while searching the database, not AND
-    * TODO : replace with SQL Wildcard Search
     */
    public void equipmentSearch()
    {
@@ -251,10 +250,10 @@ public class deskAppController implements Initializable
       String searchString = searchField.getText();
       if (searchString.contains("-"))
       {
-         searchString = searchString.substring(searchString.lastIndexOf('-'), searchString.length());
+         searchString = searchString.substring(searchString.lastIndexOf('-') + 1, searchString.length());
       }
       searchString = searchString.toLowerCase();
-      
+      System.out.println(searchString);
       ArrayList<String> itemResults = Main.database.search(searchString);
       
       searchResults.getItems().clear();
