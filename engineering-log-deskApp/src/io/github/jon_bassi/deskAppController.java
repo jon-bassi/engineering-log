@@ -25,9 +25,8 @@ import javafx.scene.control.TextField;
  *        -make sure items which are broken are attributed to admin???
  *        -look at Check Out Item method for correct algorithm
  *        -set up batch file for db backups
- *        -changing date from check in out selected does nothing
- *        -when adding item to a job the other items are not updated (estimated return)
- *        -multiple items still suffers from error single item did
+ *        -show job number as personal item for personal items
+ *        -add check in job (checks in all items in a job??)
  * @author jon-bassi
  *
  */
@@ -79,6 +78,8 @@ public class deskAppController implements Initializable
    private Label checkedOutCurrName;
    @ FXML
    private Label checkedOutCurrDate;
+   @ FXML
+   private Label checkedOutRetDate;
    @ FXML
    private Label checkedOutCurrNum;
    @ FXML
@@ -279,6 +280,7 @@ public class deskAppController implements Initializable
          checkedOutCurrManu.setText("");
          checkedOutCurrName.setText("");
          checkedOutCurrDate.setText("");
+         checkedOutRetDate.setText("");
          checkedOutCurrNum.setText("");
          checkedOutCurrAct.setText("");
          checkedOutCurrDept.setText("");
@@ -299,6 +301,7 @@ public class deskAppController implements Initializable
       checkedOutCurrManu.setText(currItem.getManufacturer());
       checkedOutCurrName.setText(currItem.getName());
       checkedOutCurrDate.setText(currItem.getCheckedout().toString());
+      checkedOutRetDate.setText(currItem.getEstimatedreturn().toString());
       Job currJob = new Job(Main.database.getJobInfo(currItem.getDbrefnum()));
       if (currJob.getDbrefnum() <= 10)
       {
@@ -700,9 +703,9 @@ public class deskAppController implements Initializable
           * Out for Calibration
           */
          case "2" : String[] a2 = {"Continue"};
-            int choice2 = WindowHandler.displayConfirmDialog("This item is currently checked out for calibration, if "
-               + "the calibration is complete please continue and it will be checked in, if not, "
-               + "please cancel this transaction.",1,a2);
+            int choice2 = WindowHandler.displayConfirmDialog("This item is currently checked out for calibration, if"
+               + " the calibration is complete please continue and it will be checked in, if not,"
+               + " please cancel this transaction.",1,a2);
             // check back in
             if (choice2 == 1)
             {
@@ -733,6 +736,7 @@ public class deskAppController implements Initializable
                if (choice3 == 1)
                {
                   autoCheckIn(id);
+                  refresh();
                }
                else
                {
@@ -804,9 +808,9 @@ public class deskAppController implements Initializable
       {
          String[] options = {"Continue","Send for Calibration"};
          int result = WindowHandler.displayConfirmDialog("WARNING: this equipment is currently in need"
-               + "of calibration, if you can and will attend to the calibration before use"
-               + "on this job, please press continue. If this equipment needs to be sent out for"
-               + "calibration, press Send for Calibration and prepare the equipment to be sent."
+               + " of calibration, if you can and will attend to the calibration before use"
+               + " on this job, please press continue. If this equipment needs to be sent out for"
+               + " calibration, press Send for Calibration and prepare the equipment to be sent."
                + " If you wish to do niether of these options at the moment, please cancel."
                , 2, options);
          if (result == 0)
@@ -1221,14 +1225,13 @@ public class deskAppController implements Initializable
    private Job chooseNewJob()
    {
       Job toCreate = WindowHandler.displayNewJobPane(new Job());
-      
       String[] buttonNames = {"Edit Info","Change Number"};
       while (Main.database.checkJobExists(toCreate.getProjectnumber()))
       {
          int choice = WindowHandler.displayConfirmDialog("This job already exists in the"
-               + "database, would you like to edit the preexisting job or "
-               + "create a new job using the same information and a different"
-               + "job number?", 2, buttonNames);
+               + " database, would you like to edit the preexisting job or"
+               + " create a new job using the same information and a different"
+               + " job number?", 2, buttonNames);
          if (choice == 1)
          {
             toCreate.setDbrefnum(Main.database.getJobDBrefnum(toCreate.getProjectnumber()));

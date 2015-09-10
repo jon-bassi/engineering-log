@@ -57,7 +57,7 @@ public class Job
       projname = resultSet.get(3);
       activity = resultSet.get(4);
       dept_client = resultSet.get(5);
-      if (resultSet.size() >0)
+      if (resultSet.size() > 0)
          datetime = Timestamp.valueOf(resultSet.get(6));
       else
          datetime = new Timestamp(System.currentTimeMillis());
@@ -247,7 +247,8 @@ public class Job
    public void setEquipment(ArrayList<Equipment> equipment)
    {
       this.equipment = equipment;
-      returnDate = getItemsReturnDate();
+      if (getItemsReturnDate().getTime() > 0)
+         returnDate = getItemsReturnDate();
    }
    
    /**

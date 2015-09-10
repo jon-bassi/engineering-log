@@ -355,10 +355,15 @@ public class WindowHandler
             numbers.getSelectionModel().select(time.toString());
             units.getSelectionModel().select("week(s)");
          }
-         else
+         else if (time >= 1)
          {
             numbers.getSelectionModel().select(time.toString());
             units.getSelectionModel().select("day(s)");
+         }
+         else
+         {
+            numbers.getSelectionModel().select(0);
+            units.getSelectionModel().select(0);
          }
       }
       
