@@ -1,10 +1,12 @@
-package io.github.jon_bassi;
+package io.github.jon_bassi.view;
 
+import io.github.jon_bassi.Main;
 import io.github.jon_bassi.db.objects.Equipment;
 import io.github.jon_bassi.db.objects.Job;
 
 import java.sql.Date;
-import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.Optional;
 
 import javafx.application.Platform;
@@ -14,6 +16,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -34,7 +37,7 @@ public class WindowHandler
     * main login panel
     * @return {user choice as String, user name as String}
     */
-   protected static String[] displayLoginPane()
+   public static String[] displayLoginPane()
    {
       Alert alert = new Alert(AlertType.NONE);
       alert.setTitle("Login");
@@ -86,7 +89,7 @@ public class WindowHandler
     * new user creation panel
     * @return {user choice as String, username as String, full name as String, email as String}
     */
-   protected static String[] displayNewUserPane()
+   public static String[] displayNewUserPane()
    {
       Alert alert = new Alert(AlertType.NONE);
       alert.setTitle("Create New User");
@@ -143,7 +146,7 @@ public class WindowHandler
     * email in the following indices
     * @return user's choice of button, 1 = yes, 2 = no, anything else = cancel
     */
-   protected static int displayConfirmUserPane(String[] info)
+   public static int displayConfirmUserPane(String[] info)
    {
       Alert alert = new Alert(AlertType.NONE);
       alert.setTitle("Create New User");
@@ -179,8 +182,11 @@ public class WindowHandler
       return 0;
    }
    
-   
-   protected static String displayUserChooser() throws SQLException
+   /**
+    * 
+    * @return
+    */
+   public static String displayUserChooser()
    {
       Alert alert = new Alert(AlertType.NONE);
       alert.setTitle("Create New User");
@@ -217,7 +223,7 @@ public class WindowHandler
     * @param toEdit
     * @return
     */
-   protected static Job displayNewJobPane(Job toEdit)
+   public static Job displayNewJobPane(Job toEdit)
    {
       Job toCreate = new Job();
       
@@ -323,6 +329,9 @@ public class WindowHandler
       grid.add(numbers, 0, 0);
       grid.add(units, 1, 0);
       
+      numbers.getSelectionModel().select(0);
+      units.getSelectionModel().select(0);
+      
       if (toEdit.getReturnDate() != null && toEdit.getDbrefnum() != -1)
       {
          Long time = toEdit.getReturnDate().getTime() - toEdit.getDatetime().getTime();
@@ -346,10 +355,15 @@ public class WindowHandler
             numbers.getSelectionModel().select(time.toString());
             units.getSelectionModel().select("week(s)");
          }
-         else
+         else if (time >= 1)
          {
             numbers.getSelectionModel().select(time.toString());
             units.getSelectionModel().select("day(s)");
+         }
+         else
+         {
+            numbers.getSelectionModel().select(0);
+            units.getSelectionModel().select(0);
          }
       }
       
@@ -417,6 +431,7 @@ public class WindowHandler
       
       if (result.get() == submit)
       {
+         toCreate.setReady(true);
          toCreate.setComments(comments.getText());
          toCreate.setUsername(Main.user);
          return toCreate;
@@ -430,7 +445,7 @@ public class WindowHandler
     * @param oldValues
     * @return [user choice, id, name, manufacturer, calibration interval, comments]
     */
-   protected static Equipment displayNewEquipmentPane(Equipment toEdit)
+   public static Equipment displayNewEquipmentPane(Equipment toEdit)
    {
       Equipment toCreate = new Equipment();
       if (!toEdit.getName().equals(""))
@@ -515,9 +530,13 @@ public class WindowHandler
       numbers.getSelectionModel().select(0);
       units.getSelectionModel().select(0);
       
+      Label dateLabel = new Label("Last date of Calibration:");
+      DatePicker lastCalibration = new DatePicker();
+      
       grid2.add(numbers, 0, 0);
       grid2.add(units, 1, 0);
-      
+      grid2.add(dateLabel, 0, 1);
+      grid2.add(lastCalibration, 1,1);
       
       if (toEdit.getCalibrationinterval() != 0)
       {
@@ -546,6 +565,19 @@ public class WindowHandler
             numbers.getSelectionModel().select(time.toString());
             units.getSelectionModel().select("day(s)");
          }
+         
+         if (toEdit.getCalibrationinterval() != 0)
+         {
+            Long dateTime = toEdit.getNextcalibrationdate().getTime();
+            dateTime -= toEdit.getCalibrationinterval();
+            dateTime /= 86400000;
+            dateTime += 1;  // the date was off by one due to either a rounding
+                            // error or because this doesn't take into account the
+                            // first day being 0
+            
+            LocalDate date = LocalDate.ofEpochDay(dateTime);
+            lastCalibration.setValue(date);
+         }
       }
       
       
@@ -572,9 +604,19 @@ public class WindowHandler
             default: toCreate.setReady(false);
                      return toCreate;
          }
-         // number of seconds to add to current time
          seconds *= 1000;
          toCreate.setCalibrationinterval(seconds);
+         
+         if (seconds != 0)
+         {
+            Long lastCalibrationTime = lastCalibration.getValue().getLong(ChronoField.EPOCH_DAY) * 86400000;
+            toCreate.setNextcalibrationdate(new Date(lastCalibrationTime + seconds));
+         }
+         else
+         {
+            toCreate.setNextcalibrationdate(new Date(0));
+         }
+         
          toCreate.setReady(true);
          return toCreate;
       }
@@ -591,7 +633,7 @@ public class WindowHandler
     * not including checked in.
     * @return the corresponding dbrefnum
     */
-   protected static int displayEquipmentStatus()
+   public static int displayEquipmentStatus()
    {
       Alert alert = new Alert(AlertType.NONE);
       alert.setTitle("Create New Job");
@@ -638,9 +680,8 @@ public class WindowHandler
    /**
     * 
     * @return
-    * @throws SQLException
     */
-   protected static int displayJobChooser() throws SQLException
+   public static int displayJobChooser()
    {
       Alert alert = new Alert(AlertType.NONE);
       alert.setTitle("Choose an Existing Job");
@@ -674,7 +715,7 @@ public class WindowHandler
    }
    
    
-   protected static String displayJobNumberInput()
+   public static String displayJobNumberInput()
    {
       Alert alert = new Alert(AlertType.NONE);
       alert.setTitle("Create New Job");
@@ -710,7 +751,7 @@ public class WindowHandler
     * generic message box, use when asking questions with 1-2 answers not including cancel
     * @return 1 for first button, 2 for second, 0 for cancel
     */
-   protected static int displayConfirmDialog(String message, int buttons, String[] buttonNames)
+   public static int displayConfirmDialog(String message, int buttons, String[] buttonNames)
    {
       Alert alert = new Alert(AlertType.CONFIRMATION);
       alert.setTitle("Notice");
@@ -786,7 +827,7 @@ public class WindowHandler
     * @param message
     * @return
     */
-   protected static Alert displayAlert(String title, String header, String message)
+   public static Alert displayAlert(String title, String header, String message)
    {
       Alert alert = new Alert(AlertType.INFORMATION);
       alert.setTitle(title);
@@ -799,7 +840,7 @@ public class WindowHandler
    /**
     * displays when item id does not match selected
     */
-   protected static void displayMatchFailure()
+   public static void displayMatchFailure()
    {
       Alert alert = new Alert(AlertType.INFORMATION);
       alert.setTitle("Error");
@@ -814,7 +855,7 @@ public class WindowHandler
     * method called when an item is scanned that isn't in the database
     * @param id barcode id scanned in
     */
-   protected static void itemNotRecognized(String id)
+   public static void itemNotRecognized(String id)
    {
       String[] a = {"Continue"};
       WindowHandler.displayConfirmDialog("The item scanned is not recognized by the database. If this is a new "

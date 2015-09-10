@@ -1,5 +1,7 @@
 package io.github.jon_bassi.db.objects;
 
+import io.github.jon_bassi.Main;
+
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ public class Job
       projname = "";
       activity = "";
       dept_client = "";
-      datetime = new Timestamp(0L);
+      datetime = new Timestamp(System.currentTimeMillis());
       location = "";
       comments = "";
       returnDate = new Date(0);
@@ -55,9 +57,14 @@ public class Job
       projname = resultSet.get(3);
       activity = resultSet.get(4);
       dept_client = resultSet.get(5);
-      datetime = Timestamp.valueOf(resultSet.get(6));
+      if (resultSet.size() > 0)
+         datetime = Timestamp.valueOf(resultSet.get(6));
+      else
+         datetime = new Timestamp(System.currentTimeMillis());
       location = resultSet.get(7);
       comments = resultSet.get(8);
+      
+      setEquipment(Main.database.getItemsForJob(dbrefnum));
    }
 
    /**
@@ -240,7 +247,8 @@ public class Job
    public void setEquipment(ArrayList<Equipment> equipment)
    {
       this.equipment = equipment;
-      returnDate = getItemsReturnDate();
+      if (getItemsReturnDate().getTime() > 0)
+         returnDate = getItemsReturnDate();
    }
    
    /**
