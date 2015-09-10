@@ -25,8 +25,8 @@ import javafx.scene.control.TextField;
  *        -make sure items which are broken are attributed to admin???
  *        -look at Check Out Item method for correct algorithm
  *        -set up batch file for db backups
- *        -show job number as personal item for personal items
  *        -add check in job (checks in all items in a job??)
+ *        -strings file???
  * @author jon-bassi
  *
  */
@@ -303,9 +303,15 @@ public class deskAppController implements Initializable
       checkedOutCurrDate.setText(currItem.getCheckedout().toString());
       checkedOutRetDate.setText(currItem.getEstimatedreturn().toString());
       Job currJob = new Job(Main.database.getJobInfo(currItem.getDbrefnum()));
-      if (currJob.getDbrefnum() <= 10)
+      if (currJob.getDbrefnum() <= 10 && currJob.getDbrefnum() != 4)
       {
          checkedOutCurrNum.setText("none");
+         checkedOutCurrAct.setText("none");
+         checkedOutCurrDept.setText("none");
+      }
+      else if (currJob.getDbrefnum() == 4)
+      {
+         checkedOutCurrNum.setText("Personal Item");
          checkedOutCurrAct.setText("none");
          checkedOutCurrDept.setText("none");
       }
@@ -355,9 +361,15 @@ public class deskAppController implements Initializable
       pastDueCurrName.setText(currItem.getName());
       pastDueCurrDate.setText(currItem.getCheckedout().toString());
       Job currJob = new Job(Main.database.getJobInfo(currItem.getDbrefnum()));
-      if (currJob.getDbrefnum() <= 10)
+      if (currJob.getDbrefnum() <= 10 && currJob.getDbrefnum() != 4)
       {
          pastDueCurrNum.setText("none");
+         pastDueCurrAct.setText("none");
+         pastDueCurrDept.setText("none");
+      }
+      else if (currJob.getDbrefnum() == 4)
+      {
+         pastDueCurrNum.setText("Personal Item");
          pastDueCurrAct.setText("none");
          pastDueCurrDept.setText("none");
       }
@@ -408,9 +420,15 @@ public class deskAppController implements Initializable
       searchName.setText(currItem.getName());
       searchDate.setText(currItem.getCheckedout().toString());
       Job currJob = new Job(Main.database.getJobInfo(currItem.getDbrefnum()));
-      if (currJob.getDbrefnum() <= 10)
+      if (currJob.getDbrefnum() <= 10 && currJob.getDbrefnum() != 4)
       {
          searchNum.setText("none");
+         searchAct.setText("none");
+         searchDept.setText("none");
+      }
+      else if (currJob.getDbrefnum() == 4)
+      {
+         searchNum.setText("Personal Item");
          searchAct.setText("none");
          searchDept.setText("none");
       }
@@ -1164,9 +1182,15 @@ public class deskAppController implements Initializable
       currName.setText(currItem.getName());
       currDate.setText(currItem.getCheckedout().toString());
       Job currJob = new Job(Main.database.getJobInfo(currItem.getDbrefnum()));
-      if (currJob.getDbrefnum() <= 10)
+      if (currJob.getDbrefnum() <= 10 && currJob.getDbrefnum() != 4)
       {
          currNum.setText("none");
+         currAct.setText("none");
+         currDept.setText("none");
+      }
+      else if (currJob.getDbrefnum() == 4)
+      {
+         currNum.setText("Personal Item");
          currAct.setText("none");
          currDept.setText("none");
       }
