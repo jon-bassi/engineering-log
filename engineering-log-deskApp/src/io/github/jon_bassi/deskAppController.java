@@ -26,7 +26,7 @@ import javafx.scene.control.TextField;
  *        -look at Check Out Item method for correct algorithm
  *        -set up batch file for db backups
  *        -add check in job (checks in all items in a job??)
- *        -strings file???
+ *        -strings file??
  * @author jon-bassi
  *
  */
@@ -254,7 +254,7 @@ public class deskAppController implements Initializable
          searchString = searchString.substring(searchString.lastIndexOf('-') + 1, searchString.length());
       }
       searchString = searchString.toLowerCase();
-      System.out.println(searchString);
+      
       ArrayList<String> itemResults = Main.database.search(searchString);
       
       searchResults.getItems().clear();
