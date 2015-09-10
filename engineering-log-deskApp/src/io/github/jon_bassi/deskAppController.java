@@ -254,7 +254,7 @@ public class deskAppController implements Initializable
          searchString = searchString.substring(searchString.lastIndexOf('-') + 1, searchString.length());
       }
       searchString = searchString.toLowerCase();
-      System.out.println(searchString);
+      
       ArrayList<String> itemResults = Main.database.search(searchString);
       
       searchResults.getItems().clear();
