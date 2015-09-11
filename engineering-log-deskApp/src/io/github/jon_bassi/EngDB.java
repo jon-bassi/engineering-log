@@ -328,6 +328,62 @@ public class EngDB
    }
    
    /**
+    * returns a list of all items checked in to the database
+    * @return
+    */
+   public ArrayList<String> getAllCheckedIn()
+   {
+      try
+      {
+         String sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser"
+               + " = 'admin'";
+         ArrayList<String> items = new ArrayList<>();
+         ResultSet rs = runSql(sql);
+         
+         while (rs.next())
+         {
+            items.add(rs.getString(1) + " " + rs.getString(3) + " " + rs.getString(2));
+         }
+         
+         return items;
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      return null;
+   }
+   
+   
+   public ArrayList<String> getFilteredCheckdIn(String filterText)
+   {
+      try
+      {
+         String sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser"
+               + " = 'admin' AND (name LIKE '%" + filterText + "%' OR "
+               + " manufacturer LIKE '%" + filterText + "%' OR id LIKE '%" + filterText + "%')";
+         ArrayList<String> items = new ArrayList<>();
+         ResultSet rs = runSql(sql);
+         
+         while (rs.next())
+         {
+            items.add(rs.getString(1) + " " + rs.getString(3) + " " + rs.getString(2));
+         }
+         
+         return items;
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      return null;
+   }
+   
+   /**
     * returns a list of all items checked out minus personal items
     * @return ArrayList of all users
     */

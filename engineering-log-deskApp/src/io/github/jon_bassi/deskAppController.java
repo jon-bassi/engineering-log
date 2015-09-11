@@ -24,7 +24,6 @@ import javafx.scene.control.TextField;
  *         amount of items
  *        -make sure items which are broken are attributed to admin???
  *        -look at Check Out Item method for correct algorithm
- *        -set up batch file for db backups
  *        -add check in job (checks in all items in a job??)
  *        -strings file??
  * @author jon-bassi
@@ -39,6 +38,8 @@ public class deskAppController implements Initializable
    @ FXML
    private ListView<String> checkedOutList;
    @ FXML
+   private ListView<String> checkedInList;
+   @ FXML
    private ListView<String> calibrationList;
    @ FXML
    private ListView<String> checkedOutAll;
@@ -48,6 +49,8 @@ public class deskAppController implements Initializable
    private ListView<String> searchResults;
    
    // Home tab
+   @ FXML
+   private TextField filterField;
    @ FXML
    private Label currUser;
    @ FXML
@@ -140,7 +143,7 @@ public class deskAppController implements Initializable
    public void initialize(URL arg0, ResourceBundle arg1)
    {
       updateCheckedOut();
-      updateCalibrations();
+      updateCheckedIn();
       
       // new thread for loading things not on the front page - won't stall the program on load
       // also include checks and updates here, updates can be tested once a week with current/next
@@ -149,9 +152,9 @@ public class deskAppController implements Initializable
          @Override
          public void run()
          {
-            // update all the checked out items on page 2 and 3
-            
-            updateCheckedOutAll();
+            // update other pages
+            updateCalibrations();
+            //updateCheckedOutAll();
             updatePastDue();
             
             lastUpdate = System.currentTimeMillis();
@@ -201,7 +204,7 @@ public class deskAppController implements Initializable
       
       ArrayList<ListView<String>> lists = new ArrayList<>();
       lists.add(checkedOutList);
-      lists.add(calibrationList);
+      lists.add(checkedInList);
       
       // check which frame is selected
       if (checkedOutList.isFocused())
@@ -224,9 +227,15 @@ public class deskAppController implements Initializable
       currName.setText(currItem.getName());
       currDate.setText(currItem.getCheckedout().toString());
       Job currJob = new Job(Main.database.getJobInfo(currItem.getDbrefnum()));
-      if (currJob.getDbrefnum() <= 10)
+      if (currJob.getDbrefnum() <= 10 && currJob.getDbrefnum() != 4)
       {
          currNum.setText("none");
+         currAct.setText("none");
+         currDept.setText("none");
+      }
+      else if (currJob.getDbrefnum() == 4)
+      {
+         currNum.setText("Personal Item");
          currAct.setText("none");
          currDept.setText("none");
       }
@@ -258,6 +267,7 @@ public class deskAppController implements Initializable
       ArrayList<String> itemResults = Main.database.search(searchString);
       
       searchResults.getItems().clear();
+      
       for (String s : itemResults)
          searchResults.getItems().add(s);
       searchResults.getSelectionModel().select(1);
@@ -482,8 +492,9 @@ public class deskAppController implements Initializable
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
       updateCheckedOut();
+      updateCheckedIn();
       updateCalibrations();
-      updateCheckedOutAll();
+      //updateCheckedOutAll();
       updatePastDue();
    }
    
@@ -496,6 +507,21 @@ public class deskAppController implements Initializable
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
       String id = scanItem();
+      if (id.equals("") || !Main.database.checkEquipmentExists(id))
+      {
+         WindowHandler.displayMatchFailure();
+         return;
+      }
+      
+      editItem(id);
+   }
+   
+   
+   private void editItem(String id)
+   {
+      Main.database.reconnect();
+      lastUpdate = System.currentTimeMillis();
+      
       if (id.equals("") || !Main.database.checkEquipmentExists(id))
       {
          WindowHandler.displayMatchFailure();
@@ -539,6 +565,7 @@ public class deskAppController implements Initializable
       Main.database.updateItemInfo(toEdit);
       refresh();
    }
+   
    
    @ FXML
    /**
@@ -590,6 +617,26 @@ public class deskAppController implements Initializable
    
    @ FXML
    /**
+    * filters the checked in list on the front page when the filter button is pressed in
+    * enter is pressed in the text field
+    */
+   public void filterCheckedIn()
+   {
+      String filterText = filterField.getText();
+      
+      ArrayList<String> filteredItems = Main.database.getFilteredCheckdIn(filterText);
+      
+      checkedInList.getItems().clear();
+      checkedInList.getItems().addAll(filteredItems);
+      
+   }
+   
+   
+   
+   
+   @ FXML
+   /**
+    * TODO : seperate
     * checks in or out the selected item depending on the equipment's job and status
     */
    public void checkInOutSelected()
@@ -795,6 +842,57 @@ public class deskAppController implements Initializable
    
    @ FXML
    /**
+    * checks out the selected item on the front page
+    */
+   public void checkOutSelected()
+   {
+      Main.database.reconnect();
+      lastUpdate = System.currentTimeMillis();
+      
+      String id = currID.getText();
+      
+      Equipment toCheckOut = new Equipment(Main.database.getItemInfo(id));
+      if (toCheckOut.getDbrefnum() > 10 || toCheckOut.getDbrefnum() == 4)
+      {
+         WindowHandler.displayAlert("Error", "You already have this item checked out..."
+               , "This piece of equipment is already checked out on a job, if you would like to"
+               + " check it out for a different job, please check in the equipment then check it"
+               + " out on a new job.");
+         return;
+      }
+      else if (toCheckOut.getDbrefnum() == 4)
+      {
+         String[] options = {"Continue"};
+         WindowHandler.displayConfirmDialog("You have selected one of your personal items"
+               + " for check out, if this was in error, please cancel, otherwise press continue."
+               , 1, options);
+         // TODO logic stuff
+         return;
+      }
+      else
+      {
+         checkOutItem(id);
+      }
+   }
+   
+   @ FXML
+   /**
+    * brings up edit item window for item from list on front page
+    */
+   public void editSelected()
+   {
+      Main.database.reconnect();
+      lastUpdate = System.currentTimeMillis();
+      
+      // get the data from the selected item - this shouldn't cause any errors and is
+      // faster than depending on which list is focused
+      String id = currID.getText();
+      
+      editItem(id);
+   }
+   
+   @ FXML
+   /**
     * Called when Single Item Button is pressed - checks out item or adds to DB
     */
    public void checkOutItem()
@@ -817,10 +915,20 @@ public class deskAppController implements Initializable
       {
          toCreate = createNewItem(toCreate);
       }
-      else
-      {
-         toCreate = new Equipment(Main.database.getItemInfo(toCreate.getId()));
-      }
+      checkOutItem(id);
+   }
+   
+   /**
+    * 
+    * @param id
+    */
+   private void checkOutItem(String id)
+   {
+      Main.database.reconnect();
+      lastUpdate = System.currentTimeMillis();
+      
+      Equipment toCreate = new Equipment(Main.database.getItemInfo(id));
+      
       // checking if the item needs calibration or is broken
       if (Main.database.checkEquipmentCalibration(id))
       {
@@ -1070,6 +1178,8 @@ public class deskAppController implements Initializable
          // create new
          else
          {
+            int dbrefnum = Main.database.insertNewJob(toEdit);
+            toEdit.setDbrefnum(dbrefnum);
             for (String id : scans)
             {
                Equipment toAdd = new Equipment(Main.database.getItemInfo(id));
@@ -1136,8 +1246,11 @@ public class deskAppController implements Initializable
          pastDueAll.getItems().add(s);
    }
    
+   @SuppressWarnings("unused")
+   @Deprecated
    /**
     * updates the list of all checked out items, personal items 
+    * TODO : delete
     */
    private void updateCheckedOutAll()
    {
@@ -1148,6 +1261,20 @@ public class deskAppController implements Initializable
       checkedOutAll.getItems().clear();
       for (String s : allCheckedOut)
          checkedOutAll.getItems().add(s);
+   }
+   
+   /**
+    * updates the list of all checked in items on the front page
+    */
+   private void updateCheckedIn()
+   {
+      ArrayList<String> checkedIn = new ArrayList<>();
+      
+      checkedIn = Main.database.getAllCheckedIn();
+      
+      checkedInList.getItems().clear();
+      for (String s : checkedIn)
+         checkedInList.getItems().add(s);
    }
    
    /**

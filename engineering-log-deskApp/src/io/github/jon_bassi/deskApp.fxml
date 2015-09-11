@@ -46,7 +46,7 @@
                         <Insets bottom="10.0" fx:id="x4" />
                       </GridPane.margin>
                     </Label>
-                    <ListView fx:id="checkedOutList" onMouseClicked="#viewCurrInfo" prefHeight="213.0" prefWidth="657.0" GridPane.rowIndex="1">
+                    <ListView fx:id="checkedOutList" onKeyReleased="#viewCurrInfo" onMouseClicked="#viewCurrInfo" prefHeight="213.0" prefWidth="657.0" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin></ListView>
@@ -129,11 +129,25 @@
                             <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                         </GridPane>
-                        <Button mnemonicParsing="false" onAction="#checkInOutSelected" text="Check In/Out/Edit Selected Item" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                          <GridPane.margin>
-                            <Insets right="10.0" fx:id="x1" />
-                          </GridPane.margin>
-                        </Button>
+                                    <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                              <Button mnemonicParsing="false" onAction="#checkInOutSelected" text="Check In Selected" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                <GridPane.margin>
+                                  <Insets fx:id="x1" />
+                                </GridPane.margin>
+                              </Button>
+                                          <Button mnemonicParsing="false" onAction="#checkOutSelected" text="Check Out Selected" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                          <Button mnemonicParsing="false" onAction="#editSelected" text="Edit Selected" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                       </children>
+                                    </GridPane>
                       </children>
                       <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
@@ -146,12 +160,12 @@
                       </rowConstraints>
                     </GridPane>
                     <Label text="More information" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.margin="$x4" GridPane.valignment="BOTTOM" />
-                    <ListView fx:id="calibrationList" onMouseClicked="#viewCurrInfo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                    <ListView fx:id="checkedInList" onKeyReleased="#viewCurrInfo" onMouseClicked="#viewCurrInfo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
                       <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" />
                       </GridPane.margin>
                     </ListView>
-                    <Label text="Upcoming Calibrations" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                    <Label text="Checked In Items" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                       <GridPane.margin>
                         <Insets bottom="10.0" fx:id="x4" />
                       </GridPane.margin>
@@ -168,7 +182,7 @@
                             <Insets top="10.0" />
                           </GridPane.margin>
                         </Button>
-                        <Label text="Add/Check Out" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+                        <Label text="Check Out" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
                           <GridPane.margin>
                             <Insets bottom="10.0" fx:id="x4" />
                           </GridPane.margin>
@@ -176,7 +190,7 @@
                       </children>
                       <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       </columnConstraints>
                       <rowConstraints>
@@ -185,6 +199,27 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       </rowConstraints>
                     </GridPane>
+                              <GridPane GridPane.rowIndex="4">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <TextField fx:id="filterField" onAction="#filterCheckedIn">
+                                       <GridPane.margin>
+                                          <Insets bottom="10.0" left="10.0" />
+                                       </GridPane.margin>
+                                    </TextField>
+                                    <Button mnemonicParsing="false" onAction="#filterCheckedIn" text="Filter" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                       <GridPane.margin>
+                                          <Insets bottom="10.0" />
+                                       </GridPane.margin>
+                                    </Button>
+                                 </children>
+                              </GridPane>
                   </children>
                   <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -205,13 +240,155 @@
             </AnchorPane>
           </content>
         </Tab>
-        <Tab text="Checked Out Items">
+        <Tab text="Search">
+          <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <GridPane layoutX="244.0" layoutY="322.0">
+                  <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  </rowConstraints>
+                </GridPane>
+                <GridPane layoutX="0.0" layoutY="0.0" prefHeight="659.0" prefWidth="1150.0">
+                  <children>
+                    <Label text="Item Search" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="BOTTOM" />
+                    <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                      <children>
+                        <ListView fx:id="searchResults" onMouseClicked="#setSearchedInfo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                          <GridPane.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+                          </GridPane.margin>
+                        </ListView>
+                        <GridPane GridPane.columnIndex="1" GridPane.rowIndex="0">
+                          <children>
+                            <Label text="Checked Out To:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Barcode ID:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                            <Label text="Manufacturer:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                            <Label text="Name:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                            <Label text="Date Checked Out:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                            <Label text="Job Number:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                            <Label text="Department:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                            <Label text="Activity:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
+                            <Label text="Comments:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="TOP">
+                              <GridPane.margin>
+                                <Insets right="10.0" top="5.0" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label fx:id="searchUser" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="0" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets left="10.0" fx:id="x2" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label fx:id="searchID" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                            <Label fx:id="searchManu" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                            <Label fx:id="searchName" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                            <Label fx:id="searchDate" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                            <Label fx:id="searchNum" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                            <Label fx:id="searchDept" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                            <Label fx:id="searchAct" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
+                            <TextArea fx:id="searchComments" editable="false" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                              <GridPane.margin>
+                                <Insets bottom="3.0" left="3.0" right="10.0" top="3.0" />
+                              </GridPane.margin>
+                            </TextArea>
+                          </children>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                          <GridPane.margin>
+                            <Insets top="10.0" />
+                          </GridPane.margin>
+                        </GridPane>
+                      </children>
+                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                    </GridPane>
+                    <Label text="Item Results" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="BOTTOM" />
+                    <Separator blendMode="DARKEN" prefWidth="1150.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                      <effect>
+                        <BoxBlur height="0.0" width="46.875" fx:id="x5" />
+                      </effect>
+                    </Separator>
+                    <Separator blendMode="DARKEN" effect="$x5" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <GridPane GridPane.columnIndex="0" GridPane.rowIndex="1">
+                      <children>
+                        <Button mnemonicParsing="false" onAction="#equipmentSearch" text="Search" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="0" GridPane.valignment="TOP">
+                          <GridPane.margin>
+                            <Insets left="10.0" top="10.0" />
+                          </GridPane.margin>
+                        </Button>
+                        <TextField fx:id="searchField" onAction="#equipmentSearch" prefWidth="200.0" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="TOP">
+                          <GridPane.margin>
+                            <Insets left="10.0" right="10.0" top="10.0" />
+                          </GridPane.margin>
+                        </TextField>
+                        <Label prefHeight="48.0" prefWidth="227.0" text="*Note: This search form allows searching by both serial number/barcode id and name*" wrapText="true" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="0" GridPane.valignment="TOP">
+                          <GridPane.margin>
+                            <Insets left="10.0" right="10.0" top="40.0" />
+                          </GridPane.margin>
+                        </Label>
+                      </children>
+                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                    </GridPane>
+                    <Label text="Equipment Package Check" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
+                    <Label text="W.I.P." GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                      <font>
+                        <Font size="30.0" />
+                      </font>
+                    </Label>
+                  </children>
+                  <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="569.0" minWidth="-Infinity" prefWidth="493.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="700.0" />
+                  </columnConstraints>
+                  <rowConstraints>
+                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="260.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="33.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="270.0" vgrow="SOMETIMES" />
+                  </rowConstraints>
+                </GridPane>
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab text="Upcoming Calibrations">
           <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
               <children>
                 <GridPane prefHeight="656.0" prefWidth="1152.0">
                   <children>
-                    <ListView fx:id="checkedOutAll" onMouseClicked="#setCheckedOutInfo">
+                    <ListView fx:id="calibrationList" onMouseClicked="#setCheckedOutInfo">
                       <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                       </GridPane.margin>
@@ -518,148 +695,167 @@
             </AnchorPane>
           </content>
         </Tab>
-        <Tab text="Search">
-          <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-              <children>
-                <GridPane layoutX="244.0" layoutY="322.0">
-                  <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  </rowConstraints>
-                </GridPane>
-                <GridPane layoutX="0.0" layoutY="0.0" prefHeight="659.0" prefWidth="1150.0">
-                  <children>
-                    <Label text="Item Search" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="BOTTOM" />
-                    <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
-                      <children>
-                        <ListView fx:id="searchResults" onMouseClicked="#setSearchedInfo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                          <GridPane.margin>
-                            <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
-                          </GridPane.margin>
-                        </ListView>
-                        <GridPane GridPane.columnIndex="1" GridPane.rowIndex="0">
-                          <children>
-                            <Label text="Checked Out To:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0" GridPane.valignment="CENTER">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Barcode ID:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                            <Label text="Manufacturer:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-                            <Label text="Name:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-                            <Label text="Date Checked Out:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-                            <Label text="Job Number:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
-                            <Label text="Department:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
-                            <Label text="Activity:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
-                            <Label text="Comments:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="TOP">
-                              <GridPane.margin>
-                                <Insets right="10.0" top="5.0" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="searchUser" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="0" GridPane.valignment="CENTER">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x2" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="searchID" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                            <Label fx:id="searchManu" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-                            <Label fx:id="searchName" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-                            <Label fx:id="searchDate" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-                            <Label fx:id="searchNum" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
-                            <Label fx:id="searchDept" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
-                            <Label fx:id="searchAct" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
-                            <TextArea fx:id="searchComments" editable="false" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                              <GridPane.margin>
-                                <Insets bottom="3.0" left="3.0" right="10.0" top="3.0" />
-                              </GridPane.margin>
-                            </TextArea>
-                          </children>
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                          <GridPane.margin>
-                            <Insets top="10.0" />
-                          </GridPane.margin>
+            <Tab text="Past Due Items">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <GridPane prefHeight="656.0" prefWidth="1152.0">
+                           <children>
+                              <ListView fx:id="pastDueAll1" onMouseClicked="#setPastDueInfo">
+                                 <GridPane.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </GridPane.margin>
+                              </ListView>
+                              <GridPane GridPane.columnIndex="1">
+                                 <children>
+                                    <GridPane GridPane.columnIndex="1">
+                                       <children>
+                                          <Label text="Barcode ID:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" fx:id="x111" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Manufacturer:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" fx:id="x1" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Name:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" fx:id="x1" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Date Checked Out:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" fx:id="x1" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Job Number:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" fx:id="x1" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Comments:" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="TOP">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" top="5.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="pastDueCurrID1" text="0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" fx:id="x211" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="pastDueCurrManu1" text="HDR" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" fx:id="x211" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="pastDueCurrName1" text="placeholder" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" fx:id="x211" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="pastDueCurrDate1" text="2000-01-01 00:00:00" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" fx:id="x211" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="pastDueCurrNum1" text="0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" fx:id="x2111" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Department:" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" fx:id="x1" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Checked Out To:" GridPane.halignment="RIGHT">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" fx:id="x1" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="pastDueCurrUser1" text="user" GridPane.columnIndex="1">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" fx:id="x2" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="pastDueCurrDept1" text="dept" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" fx:id="x2" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Activity:" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" fx:id="x11" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="pastDueCurrAct1" text="act" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" fx:id="x22" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <TextArea fx:id="pastDueCurrComments1" editable="false" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.margin="$x3" GridPane.rowIndex="8" />
+                                       </children>
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <GridPane.margin>
+                                          <Insets top="10.0" />
+                                       </GridPane.margin>
+                                    </GridPane>
+                                    <Button mnemonicParsing="false" text="&lt;&gt;" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                                       <GridPane.margin>
+                                          <Insets right="3.0" top="10.0" fx:id="x1111" />
+                                       </GridPane.margin>
+                                    </Button>
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="539.3770751953125" minWidth="10.0" prefWidth="480.5601806640625" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints maxHeight="272.0" minHeight="10.0" prefHeight="233.43145751953125" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="248.73727416992188" minHeight="0.0" prefHeight="247.56854248046875" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="660.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="559.80224609375" minWidth="10.0" prefWidth="300.2952880859375" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints maxHeight="497.0" minHeight="10.0" prefHeight="481.8758544921875" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="255.0" minHeight="10.0" prefHeight="173.1241455078125" vgrow="SOMETIMES" />
+                           </rowConstraints>
                         </GridPane>
-                      </children>
-                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      </columnConstraints>
-                      <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      </rowConstraints>
-                    </GridPane>
-                    <Label text="Item Results" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="BOTTOM" />
-                    <Separator blendMode="DARKEN" prefWidth="1150.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
-                      <effect>
-                        <BoxBlur height="0.0" width="46.875" fx:id="x5" />
-                      </effect>
-                    </Separator>
-                    <Separator blendMode="DARKEN" effect="$x5" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                    <GridPane GridPane.columnIndex="0" GridPane.rowIndex="1">
-                      <children>
-                        <Button mnemonicParsing="false" onAction="#equipmentSearch" text="Search" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="0" GridPane.valignment="TOP">
-                          <GridPane.margin>
-                            <Insets left="10.0" top="10.0" />
-                          </GridPane.margin>
-                        </Button>
-                        <TextField fx:id="searchField" onAction="#equipmentSearch" prefWidth="200.0" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="TOP">
-                          <GridPane.margin>
-                            <Insets left="10.0" right="10.0" top="10.0" />
-                          </GridPane.margin>
-                        </TextField>
-                        <Label prefHeight="48.0" prefWidth="227.0" text="*Note: This search form allows searching by both serial number/barcode id and name*" wrapText="true" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="0" GridPane.valignment="TOP">
-                          <GridPane.margin>
-                            <Insets left="10.0" right="10.0" top="40.0" />
-                          </GridPane.margin>
-                        </Label>
-                      </children>
-                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      </columnConstraints>
-                      <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      </rowConstraints>
-                    </GridPane>
-                    <Label text="Equipment Package Check" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
-                    <Label text="W.I.P." GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-                      <font>
-                        <Font size="30.0" />
-                      </font>
-                    </Label>
-                  </children>
-                  <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="569.0" minWidth="-Infinity" prefWidth="493.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="700.0" />
-                  </columnConstraints>
-                  <rowConstraints>
-                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="260.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="33.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="270.0" vgrow="SOMETIMES" />
-                  </rowConstraints>
-                </GridPane>
-              </children>
-            </AnchorPane>
-          </content>
-        </Tab>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Job List">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
+            <Tab text="Audit Trail">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
       </tabs>
     </TabPane>
   </children>

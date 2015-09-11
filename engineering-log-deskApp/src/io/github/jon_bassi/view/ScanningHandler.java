@@ -42,11 +42,11 @@ public class ScanningHandler
       Platform.runLater(() -> id.requestFocus());
       Optional<ButtonType> result = alert.showAndWait();
       
-      if (result.get() == ButtonType.OK)
+      if (result.isPresent() && result.get() == ButtonType.OK)
       {
          return id.getText().toUpperCase();
          
       }  
-      return id.getText().toUpperCase();
+      return "";
       }
    }
