@@ -303,9 +303,30 @@ public class EngDB
    {
       try
       {
-         String sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser = '" + Main.user + "'";
+         String sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser = '" + Main.user + "'"
+               + " AND dbrefnum <> '4'";
          ArrayList<String> items = new ArrayList<>();
+         
+         items.add("Checked");
+         items.add("Jobs");
+         items.add("Out on");
+         
          ResultSet rs = runSql(sql);
+         
+         while (rs.next())
+         {
+            int cols = rs.getMetaData().getColumnCount();
+            for (int i = 0; i < cols; i++)
+            {
+               items.add(rs.getString(i+1));
+            }
+         }
+         items.add("Personal");
+         items.add("Items");
+         items.add("");
+         sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser = '" + Main.user + "'"
+               + " AND dbrefnum = '4'";
+         rs = runSql(sql);
          
          while (rs.next())
          {
