@@ -16,6 +16,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.TreeSet;
 
 /**
@@ -464,6 +466,52 @@ public class EngDB
    }
    
    /**
+    * 
+    * @return
+    */
+   public ArrayList<String> getAllActiveJobs()
+   {
+      try
+      {
+         String sql = "SELECT dbrefnum FROM equipment WHERE checkedout <> '" + new Timestamp(0) + "'";
+         ResultSet rs = runSql(sql);
+         
+         HashSet<Integer> dbrefnums = new HashSet<>();
+         while (rs.next())
+         {
+            dbrefnums.add(rs.getInt(1));
+         }
+         
+         dbrefnums.remove(0);
+         dbrefnums.remove(1);
+         dbrefnums.remove(2);
+         dbrefnums.remove(3);
+         dbrefnums.remove(4);
+         
+         
+         Iterator<Integer> itr = dbrefnums.iterator();
+         ArrayList<String> jobs = new ArrayList<>();
+         while (itr.hasNext())
+         {
+            Integer dbrefnum = itr.next();
+            sql = "SELECT projname,projectnumber FROM jobs WHERE dbrefnum = '" + dbrefnum +"'";
+            rs = runSql(sql);
+            if (rs.next())
+            {
+               jobs.add(rs.getString(2) + " " + rs.getString(1));
+            }
+         }
+         
+         return jobs;
+         
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      return null;
+   }
+   
+   /**
     * returns information for a specific item
     * @return [id,dbrefnum,name,manufacturer,currentuser,checkedout,estimatedreturn,comments
     * calibrationinterval,nextcalibraitondate]
@@ -760,6 +808,73 @@ public class EngDB
    }
    
    /**
+    * Edits the information for a given piece of equipment
+    * @param toEdit
+    */
+   public void updateItemInfo(Equipment toEdit)
+   {
+      try {
+         String sql = "UPDATE equipment SET dbrefnum = '"  + toEdit.getDbrefnum() + "'"
+               + ", name = (?), manufacturer = (?), currentuser = (?), checkedout = (?)"
+               + ", estimatedreturn = (?), comments = (?), calibrationinterval = (?)"
+               + ", nextcalibrationdate = (?) WHERE id = '" + toEdit.getId() + "'";
+         
+         PreparedStatement stmt = con.prepareStatement(sql);
+         
+         stmt.setString(1, toEdit.getName());
+         stmt.setString(2, toEdit.getManufacturer());
+         stmt.setString(3, toEdit.getCurrentuser());
+         if (toEdit.getDbrefnum() != 0)
+            stmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+         else
+            stmt.setTimestamp(4, toEdit.getCheckedout());
+         stmt.setDate(5, toEdit.getEstimatedreturn());
+         stmt.setString(6, toEdit.getComments());
+         stmt.setLong(7, toEdit.getCalibrationinterval());
+         if (toEdit.getCalibrationinterval() == 0)
+            stmt.setDate(8, new Date(0L));
+         else
+            stmt.setDate(8, toEdit.getNextcalibrationdate());
+         
+         stmt.executeUpdate();
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+   }
+   
+   /**
+    * Edits the information for the given piece of equipment during a checkout
+    * @param id
+    * @param dbrefnum
+    * @param time
+    */
+   private void updateItemInfo(Equipment eq, int dbrefnum, Date returndate)
+   {
+      try
+      {
+         insertAudit(eq.getId(),dbrefnum,"admin",Main.user);
+         if (eq.getCheckedout().getTime() == 0)
+            eq.setCheckedout(new Timestamp(System.currentTimeMillis()));
+         String sql = "UPDATE equipment SET dbrefnum = '" + dbrefnum + "',"
+               + "currentuser = '" + Main.user + "', checkedout"
+               + " = '" + eq.getCheckedout() + "', estimatedreturn ="
+               + " '" + returndate + "' WHERE id = '" + eq.getId() + "'";
+         PreparedStatement stmt = con.prepareStatement(sql);
+         stmt.execute();
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+   }
+   
+   /**
     * updates the information for a job that already exists and updates information on a 
     * piece of equipment
     * @param jobInfo
@@ -835,72 +950,7 @@ public class EngDB
       }
    }
    
-   /**
-    * Edits the information for a given piece of equipment
-    * @param toEdit
-    */
-   public void updateItemInfo(Equipment toEdit)
-   {
-      try {
-         String sql = "UPDATE equipment SET dbrefnum = '"  + toEdit.getDbrefnum() + "'"
-               + ", name = (?), manufacturer = (?), currentuser = (?), checkedout = (?)"
-               + ", estimatedreturn = (?), comments = (?), calibrationinterval = (?)"
-               + ", nextcalibrationdate = (?) WHERE id = '" + toEdit.getId() + "'";
-         
-         PreparedStatement stmt = con.prepareStatement(sql);
-         
-         stmt.setString(1, toEdit.getName());
-         stmt.setString(2, toEdit.getManufacturer());
-         stmt.setString(3, toEdit.getCurrentuser());
-         if (toEdit.getCheckedout().getTime() == 0)
-            stmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
-         else
-            stmt.setTimestamp(4, toEdit.getCheckedout());
-         stmt.setDate(5, toEdit.getEstimatedreturn());
-         stmt.setString(6, toEdit.getComments());
-         stmt.setLong(7, toEdit.getCalibrationinterval());
-         if (toEdit.getCalibrationinterval() == 0)
-            stmt.setDate(8, new Date(0L));
-         else
-            stmt.setDate(8, toEdit.getNextcalibrationdate());
-         
-         stmt.executeUpdate();
-      } catch (SQLException e)
-      {
-         ExceptionHandler.displayException(e);
-      } catch (Exception e)
-      {
-         ExceptionHandler.displayException(e);
-      }
-   }
-   
-   /**
-    * Edits the information for the given piece of equipment during a checkout
-    * @param id
-    * @param dbrefnum
-    * @param time
-    */
-   private void updateItemInfo(Equipment eq, int dbrefnum, Date returndate)
-   {
-      try
-      {
-         insertAudit(eq.getId(),dbrefnum,"admin",Main.user);
-         if (eq.getCheckedout().getTime() == 0)
-            eq.setCheckedout(new Timestamp(System.currentTimeMillis()));
-         String sql = "UPDATE equipment SET dbrefnum = '" + dbrefnum + "',"
-               + "currentuser = '" + Main.user + "', checkedout"
-               + " = '" + eq.getCheckedout() + "', estimatedreturn ="
-               + " '" + returndate + "' WHERE id = '" + eq.getId() + "'";
-         PreparedStatement stmt = con.prepareStatement(sql);
-         stmt.execute();
-      } catch (SQLException e)
-      {
-         ExceptionHandler.displayException(e);
-      } catch (Exception e)
-      {
-         ExceptionHandler.displayException(e);
-      }
-   }
+
    
    /**
     * checks out an item when creating a new job

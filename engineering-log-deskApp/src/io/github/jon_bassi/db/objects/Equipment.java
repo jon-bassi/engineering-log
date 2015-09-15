@@ -249,6 +249,7 @@ public class Equipment
                   isBeingCalibrated = false;
                   this.dbrefnum = 0;
                   this.currentuser = "admin";
+                  checkedout = new Timestamp(0);
                   break;
          case 1 : isBroken = true;
                   isBeingCalibrated = false;
