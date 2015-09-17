@@ -39,6 +39,7 @@ import javafx.scene.control.TextField;
  *        -less words in popups more buttons
  *        -one version has dropdown shows all users and new user button, everyone else doesn’t
  *        -calibrations to admin?
+ *        -add out for calibration list with option to check back in
  * @author jon-bassi
  *
  */
@@ -54,6 +55,8 @@ public class deskAppController implements Initializable
    private ListView<String> checkedInList;
    @ FXML
    private ListView<String> calibrationList;
+   @ FXML
+   private ListView<String> calibrationOutList;
    @ FXML
    private ListView<String> checkedOutAll;
    @ FXML
@@ -366,7 +369,17 @@ public class deskAppController implements Initializable
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
       
-      String selected = calibrationList.getSelectionModel().getSelectedItem();
+      int list = 1;
+      
+      ArrayList<ListView<String>> lists = new ArrayList<>();
+      lists.add(calibrationList);
+      lists.add(calibrationOutList);
+      
+      // check which frame is selected
+      if (calibrationList.isFocused())
+         list = 0;
+      
+      String selected = lists.get(list).getSelectionModel().getSelectedItem();
       if (selected == null || selected.equals(""))
       {
          calCurrUser.setText("");
@@ -798,28 +811,10 @@ public class deskAppController implements Initializable
             break;
             
          /**
-          * Out for Calibration
+          * Out for Calibration - shouldn't be called
           */
-         case 2 : String[] a2 = {"Continue"};
-            int choice2 = WindowHandler.displayConfirmDialog("This item is currently checked out for"
-                  + " calibration, if is no longer being calibrated please press Check In",1,a2);
-            // check back in
-            if (choice2 == 1)
-            {
-               Main.database.updateItemCalibrationDate(id);
-               Main.database.updateItemCheckIn(id);
-               Main.database.insertAudit(id, 2, Main.user, "admin");
-               refresh();
-               WindowHandler.displayAlert("Confirmation", "Success"
-                     , "The seleced item has been checked in.");
-            }
-            else
-            {
-               WindowHandler.displayAlert("Confirmation", "Failure"
-                     , "The seleced item has NOT been checked in.");
-            }
-            
-            break;
+         case 2 : 
+               break;
          /**
           * Lab Items, unused atm
           */
@@ -866,6 +861,44 @@ public class deskAppController implements Initializable
             break;
       }
    }
+   
+   @ FXML
+   /**
+    * checks in the item on the calibration page back into the database
+    */
+   public void checkInCalSelected()
+   {
+      String id = calCurrID.getText();
+      Equipment toCheckIn = new Equipment(Main.database.getItemInfo(id));
+      
+      if (toCheckIn.getDbrefnum() != 2)
+      {
+         WindowHandler.displayAlert("Error", "Cannot check in", "This item is currently not"
+               + " checked out for calibration or currently on a job, please use this button"
+               + " only for items which were calibrated off-site.");
+         return;
+      }
+      
+      String[] options = {"Check In"};
+      int choice = WindowHandler.displayConfirmDialog("Would you like to check in "
+            + calCurrID.getText() + " " + calCurrManu.getText() + " " + calCurrName.getText()
+            + " back into the database?",1,options);
+      if (choice == 1)
+      {
+         Main.database.updateItemCalibrationDate(toCheckIn);
+         Main.database.updateItemCheckIn(id);
+         Main.database.insertAudit(id, 2, "admin", Main.user);
+         WindowHandler.displayAlert("Confirmation", "Success", "Item was successfully"
+               + " added back to the database.");
+         refresh();
+      }
+      else
+      {
+         WindowHandler.displayAlert("Confirmation", "Failure"
+               , "The seleced item has NOT been checked in.");
+      }
+   }
+   
    
    @ FXML
    /**
@@ -972,27 +1005,38 @@ public class deskAppController implements Initializable
       // checking if the item needs calibration or is broken
       if (Main.database.checkEquipmentCalibration(id))
       {
-         String[] options = {"Continue","Send for Calibration"};
-         int result = WindowHandler.displayConfirmDialog("WARNING: this equipment is currently in need"
-               + " of calibration, if you can and will attend to the calibration before use"
-               + " on this job, please press continue. If this equipment needs to be sent out for"
-               + " calibration, press Send for Calibration and prepare the equipment to be sent."
-               + " If you wish to do niether of these options at the moment, please cancel."
-               , 2, options);
+         String[] options = {"Continue"};
+         int result = WindowHandler.displayConfirmDialog("NOTE: This item needs to be calibrated before"
+               + " being used in the field. Please continue to set the calibration up", 1, options);
          if (result == 0)
             return;
-         else if (result == 2)
+         else
          {
-            WindowHandler.displayAlert("Calibration", "Sending for Calibration"
-                  , "You have chose to send this equipment out for calibration, please take"
-                  + " the required measures to assure this happens smoothly and swiftly."
-                  + " During this time the item will be checked out to you under the calibration"
-                  + " job, when the item returns please select from the list of your checked"
-                  + " out items and check it into the database. Thank you.");
-            Main.database.updateItemToCalibration(id);
-            Main.database.insertAudit(id, 2, "admin", Main.user);
-            refresh();
-            return;
+            String[] cOptions = {"Calibrate Now","Send for Calibration"};
+            result = WindowHandler.displayConfirmDialog("If this equipment can be easily calibrated inhouse"
+                  + " press Calibrate Now, if it needs to be sent out, press Send for Calibration."
+                  , 2,cOptions);
+            if (result == 0)
+               return;
+            else if (result == 1)
+            {
+               Main.database.updateItemCalibrationDate(toCreate);
+               Main.database.insertAudit(id, 2, "admin", Main.user);
+               WindowHandler.displayAlert("Confirmation", "Success", "Item was successfully"
+                     + " calibrated.");
+               refresh();
+            }
+            else
+            {
+               Main.database.updateItemToCalibration(id);
+               Main.database.insertAudit(id, 2, Main.user, "admin");
+               WindowHandler.displayAlert("Confirmation", "Success", "Item was successfully"
+                     + " marked as out for calibration, please check in from the calibration"
+                     + " tab when it returns.");
+               return;
+            }
+            
+            
          }
       }
       if (Main.database.checkEquipmentBroken(id))
@@ -1405,6 +1449,13 @@ public class deskAppController implements Initializable
       calibrationList.getItems().clear();
       for (String s : calibrations)
          calibrationList.getItems().add(s);
+      
+      
+      ArrayList<Equipment> onCalibration = Main.database.getItemsForJob(2);
+      
+      calibrationOutList.getItems().clear();
+      for (Equipment e : onCalibration)
+         calibrationOutList.getItems().add(e.getId() + " " + e.getManufacturer() + " " + e.getName());
    }
    
    /**
@@ -1419,23 +1470,6 @@ public class deskAppController implements Initializable
       pastDueAll.getItems().clear();
       for (String s : allPastDue)
          pastDueAll.getItems().add(s);
-   }
-   
-   @SuppressWarnings("unused")
-   @Deprecated
-   /**
-    * updates the list of all checked out items, personal items 
-    * TODO : delete
-    */
-   private void updateCheckedOutAll()
-   {
-      ArrayList<String> allCheckedOut = new ArrayList<>();
-      
-      allCheckedOut = Main.database.getAllCheckedOut();
-      
-      checkedOutAll.getItems().clear();
-      for (String s : allCheckedOut)
-         checkedOutAll.getItems().add(s);
    }
    
    /**

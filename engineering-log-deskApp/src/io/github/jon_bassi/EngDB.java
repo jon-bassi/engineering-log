@@ -359,7 +359,7 @@ public class EngDB
       try
       {
          String sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser"
-               + " = 'admin'";
+               + " = 'admin' AND dbrefnum = '0'";
          ArrayList<String> items = new ArrayList<>();
          ResultSet rs = runSql(sql);
          
@@ -385,7 +385,7 @@ public class EngDB
       try
       {
          String sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser"
-               + " = 'admin' AND (name LIKE '%" + filterText + "%' OR "
+               + " = 'admin' AND dbrefnum = '0' AND (name LIKE '%" + filterText + "%' OR "
                + " manufacturer LIKE '%" + filterText + "%' OR id LIKE '%" + filterText + "%')";
          ArrayList<String> items = new ArrayList<>();
          ResultSet rs = runSql(sql);
@@ -555,8 +555,8 @@ public class EngDB
          // add 2 weeks to current date
          Timestamp date = new Timestamp(System.currentTimeMillis() + 1209600000L);
          
-         String sql = "SELECT id,name FROM equipment WHERE nextcalibrationdate <= '" + date + "' "
-               + "AND nextcalibrationdate > '2000-01-01 00:00:00'";
+         String sql = "SELECT id,manufacturer,name FROM equipment WHERE nextcalibrationdate <= '" + date + "' "
+               + "AND nextcalibrationdate > '2000-01-01 00:00:00' AND dbrefnum <> '2'";
          ArrayList<String> items = new ArrayList<>();
          ResultSet rs = runSql(sql);
          
@@ -738,12 +738,13 @@ public class EngDB
     * sets the calibration date to the next calibration date based on current time
     * @param id the equipment barcode id
     */
-   public void updateItemCalibrationDate(String id) 
+   public void updateItemCalibrationDate(Equipment toEdit) 
    {
       try
       {
-         String sql = "Update equipment SET nextcalibrationdate = '" + new Date(System.currentTimeMillis())
-               + "' WHERE id = '" + id + "'";
+         String sql = "Update equipment SET nextcalibrationdate = '" 
+               + new Timestamp(toEdit.getCalibrationinterval()+ System.currentTimeMillis())
+               + "' WHERE id = '" + toEdit.getId() + "'";
          PreparedStatement stmt = con.prepareStatement(sql);
          stmt.execute();
       } catch (SQLException e)
@@ -763,7 +764,8 @@ public class EngDB
    {
       try
       {
-         PreparedStatement stmt = con.prepareStatement("UPDATE equipment SET dbrefnum = 2 WHERE id = (?)");
+         PreparedStatement stmt = con.prepareStatement("UPDATE equipment SET dbrefnum = '2'"
+               + ", currentuser = 'admin' WHERE id = (?)");
          stmt.setString(1, id);
          stmt.execute();
       } catch (SQLException e)
