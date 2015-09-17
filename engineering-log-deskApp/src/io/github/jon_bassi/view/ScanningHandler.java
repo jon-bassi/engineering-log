@@ -22,7 +22,7 @@ public class ScanningHandler
     * allows for scanning or input of item
     * @return
     */
-   public static String scan()
+   public static String scan(String s)
    {
       Alert alert = new Alert(AlertType.INFORMATION);
       alert.setTitle("Scan");
@@ -36,17 +36,21 @@ public class ScanningHandler
       TextField id = new TextField();
       id.setPromptText("id");
       
+      if (s != null)
+         id.setText(s);
+      id.selectAll();
+      
       grid.add(id, 0, 0);
       
       alert.getDialogPane().setContent(grid);
       Platform.runLater(() -> id.requestFocus());
       Optional<ButtonType> result = alert.showAndWait();
       
-      if (result.get() == ButtonType.OK)
+      if (result.isPresent() && result.get() == ButtonType.OK)
       {
          return id.getText().toUpperCase();
          
       }  
-      return id.getText().toUpperCase();
+      return "";
       }
    }

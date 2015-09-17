@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Scanner;
+import java.util.TreeSet;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,9 +25,20 @@ import javafx.scene.control.TextField;
  *         amount of items
  *        -make sure items which are broken are attributed to admin???
  *        -look at Check Out Item method for correct algorithm
- *        -set up batch file for db backups
  *        -add check in job (checks in all items in a job??)
  *        -strings file??
+ *        -less text in boxes
+ *        -show calibration date on front page
+ *        -arrow keys don’t do anything on lists
+ *        -new page for calibrations
+ *        -add list to check out that displays items 
+ *        -select all text in scan button, auto populate from with checked in items
+ *        -current jobs tab - list of jobs, click on one,
+ *         lists all items checked out to it in a different list, fields for job info and item info
+ *        -manufacturer in lists
+ *        -less words in popups more buttons
+ *        -one version has dropdown shows all users and new user button, everyone else doesn’t
+ *        -calibrations to admin?
  * @author jon-bassi
  *
  */
@@ -39,6 +51,8 @@ public class deskAppController implements Initializable
    @ FXML
    private ListView<String> checkedOutList;
    @ FXML
+   private ListView<String> checkedInList;
+   @ FXML
    private ListView<String> calibrationList;
    @ FXML
    private ListView<String> checkedOutAll;
@@ -46,8 +60,14 @@ public class deskAppController implements Initializable
    private ListView<String> pastDueAll;
    @ FXML
    private ListView<String> searchResults;
+   @ FXML
+   private ListView<String> jobListJobs;
+   @ FXML
+   private ListView<String> jobListItems;
    
    // Home tab
+   @ FXML
+   private TextField filterField;
    @ FXML
    private Label currUser;
    @ FXML
@@ -59,35 +79,41 @@ public class deskAppController implements Initializable
    @ FXML
    private Label currDate;
    @ FXML
+   private Label currRetDate;
+   @ FXML
    private Label currNum;
    @ FXML
    private Label currDept;
    @ FXML
    private Label currAct;
    @ FXML
+   private Label currNextCal;
+   @ FXML
    private TextArea currComments;
    
-   // Checked Out tab
+   // Calibration tab
    @ FXML
-   private Label checkedOutCurrUser;
+   private Label calCurrUser;
    @ FXML
-   private Label checkedOutCurrID;
+   private Label calCurrID;
    @ FXML
-   private Label checkedOutCurrManu;
+   private Label calCurrManu;
    @ FXML
-   private Label checkedOutCurrName;
+   private Label calCurrName;
    @ FXML
-   private Label checkedOutCurrDate;
+   private Label calCurrDate;
    @ FXML
-   private Label checkedOutRetDate;
+   private Label calRetDate;
    @ FXML
-   private Label checkedOutCurrNum;
+   private Label calCurrNum;
    @ FXML
-   private Label checkedOutCurrDept;
+   private Label calCurrDept;
    @ FXML
-   private Label checkedOutCurrAct;
+   private Label calCurrAct;
    @ FXML
-   private TextArea checkedOutCurrComments;
+   private Label calNextCal;
+   @ FXML
+   private TextArea calComments;
    
    // Past Due tab
    @ FXML
@@ -101,6 +127,8 @@ public class deskAppController implements Initializable
    @ FXML
    private Label pastDueCurrDate;
    @ FXML
+   private Label pastDueRetDate;
+   @ FXML
    private Label pastDueCurrNum;
    @ FXML
    private Label pastDueCurrDept;
@@ -108,6 +136,7 @@ public class deskAppController implements Initializable
    private Label pastDueCurrAct;
    @ FXML
    private TextArea pastDueCurrComments;
+   
    // Search tab
    @ FXML
    private TextField searchField;
@@ -130,6 +159,35 @@ public class deskAppController implements Initializable
    @ FXML
    private TextArea searchComments;
    
+   // JobList tab
+   @ FXML
+   private Label jobListName;
+   @ FXML
+   private Label jobListNum;
+   @ FXML
+   private Label jobListDept;
+   @ FXML
+   private Label jobListAct;
+   @ FXML
+   private Label jobListStartDate;
+   @ FXML
+   private Label jobListLocale;
+   @ FXML
+   private TextArea jobListComments;
+   @ FXML
+   private Label jobListID;
+   @ FXML
+   private Label jobListMan;
+   @ FXML
+   private Label jobListItemName;
+   @ FXML
+   private Label jobListCheckedOut;
+   @ FXML
+   private Label jobListRetDate;
+   @ FXML
+   private Label jobListUser;
+   @ FXML
+   private TextArea jobListItemComments;
    
    @ Override
    /**
@@ -140,7 +198,9 @@ public class deskAppController implements Initializable
    public void initialize(URL arg0, ResourceBundle arg1)
    {
       updateCheckedOut();
-      updateCalibrations();
+      updateCheckedIn();
+      
+      refreshJobList();
       
       // new thread for loading things not on the front page - won't stall the program on load
       // also include checks and updates here, updates can be tested once a week with current/next
@@ -149,10 +209,11 @@ public class deskAppController implements Initializable
          @Override
          public void run()
          {
-            // update all the checked out items on page 2 and 3
-            
-            updateCheckedOutAll();
+            // update other pages
+            updateCalibrations();
+            //updateCheckedOutAll();
             updatePastDue();
+            
             
             lastUpdate = System.currentTimeMillis();
             
@@ -201,15 +262,29 @@ public class deskAppController implements Initializable
       
       ArrayList<ListView<String>> lists = new ArrayList<>();
       lists.add(checkedOutList);
-      lists.add(calibrationList);
+      lists.add(checkedInList);
       
       // check which frame is selected
       if (checkedOutList.isFocused())
          list = 0;
       
-      if (lists.get(list).getSelectionModel().getSelectedItem() == null)
-         return;
       String name = lists.get(list).getSelectionModel().getSelectedItem();
+      if (name == null || name.equals("Checked Out on Jobs") || name.equals("Personal  Items"))
+      {
+         currUser.setText("");
+         currID.setText("");
+         currManu.setText("");
+         currName.setText("");
+         currDate.setText("");
+         currRetDate.setText("");
+         currNum.setText("");
+         currAct.setText("");
+         currDept.setText("");
+         currNextCal.setText("");
+         currComments.setText("");
+         return;
+      }
+
       int idx = name.indexOf(' ');
       String id = name.substring(0, idx);
       name = name.substring(idx+1,name.length());
@@ -222,11 +297,20 @@ public class deskAppController implements Initializable
       currID.setText(currItem.getId());
       currManu.setText(currItem.getManufacturer());
       currName.setText(currItem.getName());
-      currDate.setText(currItem.getCheckedout().toString());
+      if (currItem.getCheckedout().getTime() == 0)
+         currDate.setText("Checked In");
+      else
+         currDate.setText(currItem.getCheckedout().toString());
       Job currJob = new Job(Main.database.getJobInfo(currItem.getDbrefnum()));
-      if (currJob.getDbrefnum() <= 10)
+      if (currJob.getDbrefnum() <= 10 && currJob.getDbrefnum() != 4)
       {
          currNum.setText("none");
+         currAct.setText("none");
+         currDept.setText("none");
+      }
+      else if (currJob.getDbrefnum() == 4)
+      {
+         currNum.setText("Personal Item");
          currAct.setText("none");
          currDept.setText("none");
       }
@@ -236,6 +320,14 @@ public class deskAppController implements Initializable
          currAct.setText(currJob.getActivity());
          currDept.setText(currJob.getDept_client());
       }
+      if (currItem.getEstimatedreturn().getTime() <= 0)
+         currRetDate.setText("none");
+      else
+         currRetDate.setText(currItem.getEstimatedreturn().toString());
+      if (currItem.getCalibrationinterval() == 0)
+         currNextCal.setText("none");
+      else
+         currNextCal.setText(currItem.getNextcalibrationdate().toString());
       currComments.setText(currItem.getComments());
    }
    
@@ -258,33 +350,36 @@ public class deskAppController implements Initializable
       ArrayList<String> itemResults = Main.database.search(searchString);
       
       searchResults.getItems().clear();
+      
       for (String s : itemResults)
          searchResults.getItems().add(s);
       searchResults.getSelectionModel().select(1);
       setSearchedInfo();
    }
    
+   @ FXML
    /**
     * sets the info for the selected items on the checked out (all) page
     */
-   public void setCheckedOutInfo()
+   public void setCalibrationInfo()
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
       
-      String selected = checkedOutAll.getSelectionModel().getSelectedItem();
+      String selected = calibrationList.getSelectionModel().getSelectedItem();
       if (selected == null || selected.equals(""))
       {
-         checkedOutCurrUser.setText("");
-         checkedOutCurrID.setText("");
-         checkedOutCurrManu.setText("");
-         checkedOutCurrName.setText("");
-         checkedOutCurrDate.setText("");
-         checkedOutRetDate.setText("");
-         checkedOutCurrNum.setText("");
-         checkedOutCurrAct.setText("");
-         checkedOutCurrDept.setText("");
-         checkedOutCurrComments.setText("");
+         calCurrUser.setText("");
+         calCurrID.setText("");
+         calCurrManu.setText("");
+         calCurrName.setText("");
+         calCurrDate.setText("");
+         calRetDate.setText("");
+         calCurrNum.setText("");
+         calCurrAct.setText("");
+         calCurrDept.setText("");
+         calNextCal.setText("");
+         calComments.setText("");
          return;
       }
       
@@ -296,32 +391,39 @@ public class deskAppController implements Initializable
       
       Equipment currItem = new Equipment(Main.database.getItemInfo(id));
       
-      checkedOutCurrUser.setText(Main.database.getFullname(currItem.getCurrentuser()));
-      checkedOutCurrID.setText(currItem.getId());
-      checkedOutCurrManu.setText(currItem.getManufacturer());
-      checkedOutCurrName.setText(currItem.getName());
-      checkedOutCurrDate.setText(currItem.getCheckedout().toString());
-      checkedOutRetDate.setText(currItem.getEstimatedreturn().toString());
+      calCurrUser.setText(Main.database.getFullname(currItem.getCurrentuser()));
+      calCurrID.setText(currItem.getId());
+      calCurrManu.setText(currItem.getManufacturer());
+      calCurrName.setText(currItem.getName());
+      if (currItem.getCheckedout().getTime() <= 0)
+         calCurrDate.setText("Checked In");
+      else
+         calCurrDate.setText(currItem.getCheckedout().toString());
+      if (currItem.getEstimatedreturn().getTime() <= 0)
+         calRetDate.setText("none");
+      else
+         calRetDate.setText(currItem.getEstimatedreturn().toString());
       Job currJob = new Job(Main.database.getJobInfo(currItem.getDbrefnum()));
       if (currJob.getDbrefnum() <= 10 && currJob.getDbrefnum() != 4)
       {
-         checkedOutCurrNum.setText("none");
-         checkedOutCurrAct.setText("none");
-         checkedOutCurrDept.setText("none");
+         calCurrNum.setText("none");
+         calCurrAct.setText("none");
+         calCurrDept.setText("none");
       }
       else if (currJob.getDbrefnum() == 4)
       {
-         checkedOutCurrNum.setText("Personal Item");
-         checkedOutCurrAct.setText("none");
-         checkedOutCurrDept.setText("none");
+         calCurrNum.setText("Personal Item");
+         calCurrAct.setText("none");
+         calCurrDept.setText("none");
       }
       else
       {
-         checkedOutCurrNum.setText(currJob.getProjectnumber());
-         checkedOutCurrAct.setText(currJob.getActivity());
-         checkedOutCurrDept.setText(currJob.getDept_client());
+         calCurrNum.setText(currJob.getProjectnumber());
+         calCurrAct.setText(currJob.getActivity());
+         calCurrDept.setText(currJob.getDept_client());
       }
-      checkedOutCurrComments.setText(currItem.getComments());
+      calNextCal.setText(currItem.getNextcalibrationdate().toString());
+      calComments.setText(currItem.getComments());
    }
    
    /**
@@ -340,6 +442,7 @@ public class deskAppController implements Initializable
          pastDueCurrManu.setText("");
          pastDueCurrName.setText("");
          pastDueCurrDate.setText("");
+         pastDueRetDate.setText("");
          pastDueCurrNum.setText("");
          pastDueCurrAct.setText("");
          pastDueCurrDept.setText("");
@@ -360,6 +463,10 @@ public class deskAppController implements Initializable
       pastDueCurrManu.setText(currItem.getManufacturer());
       pastDueCurrName.setText(currItem.getName());
       pastDueCurrDate.setText(currItem.getCheckedout().toString());
+      if (currItem.getEstimatedreturn().getTime() <= 0)
+         pastDueRetDate.setText("none");
+      else
+         pastDueRetDate.setText(currItem.getEstimatedreturn().toString());
       Job currJob = new Job(Main.database.getJobInfo(currItem.getDbrefnum()));
       if (currJob.getDbrefnum() <= 10 && currJob.getDbrefnum() != 4)
       {
@@ -482,9 +589,11 @@ public class deskAppController implements Initializable
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
       updateCheckedOut();
+      updateCheckedIn();
       updateCalibrations();
-      updateCheckedOutAll();
+      //updateCheckedOutAll();
       updatePastDue();
+      refreshJobList();
    }
    
    @ FXML
@@ -495,7 +604,22 @@ public class deskAppController implements Initializable
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
-      String id = scanItem();
+      String id = scanItem(null);
+      if (id.equals("") || !Main.database.checkEquipmentExists(id))
+      {
+         WindowHandler.displayMatchFailure();
+         return;
+      }
+      
+      editItem(id);
+   }
+   
+   
+   private void editItem(String id)
+   {
+      Main.database.reconnect();
+      lastUpdate = System.currentTimeMillis();
+      
       if (id.equals("") || !Main.database.checkEquipmentExists(id))
       {
          WindowHandler.displayMatchFailure();
@@ -504,13 +628,17 @@ public class deskAppController implements Initializable
       
       Equipment toEdit = new Equipment(Main.database.getItemInfo(id));
       
-      String[] options = {"Edit Status"};
-      int result = WindowHandler.displayConfirmDialog("If you would like to change the status of this"
-            + " piece of equipment (Checked In/Broken/Calibration/Personal) please select the Edit"
-            + " Status button. If not, press cancel and you will be greeted with the dialog"
-            + " for editing other attributes of the current item. DO NOT USE THE FOLLOWING"
-            + " OPTIONS TO ADD A SAMPLE TO A JOB (scan single or multiple for that)."
-            , 1, options);
+      String[] options = {"Change Status","Edit Info"};
+      int result = WindowHandler.displayConfirmDialog("If you wish to set this item "
+            + "as broken, out for calibration, a personal item, please press Change Status,"
+            + " otherwise Edit Info."
+            , 2, options);
+      if (result != 1 && result != 2)
+      {
+         WindowHandler.displayAlert("Failure", "Item information was not changed"
+               , "^");
+         return;
+      }
       if (result == 1)
       {
          int dbrefnum = WindowHandler.displayEquipmentStatus();
@@ -535,10 +663,12 @@ public class deskAppController implements Initializable
                + " scanned was not edited. Please try again.");
          return;
       }
-      
       Main.database.updateItemInfo(toEdit);
       refresh();
+      WindowHandler.displayAlert("Confirmation", "Success"
+            , "The seleced item's information was updated.");
    }
+   
    
    @ FXML
    /**
@@ -576,6 +706,8 @@ public class deskAppController implements Initializable
       
       Main.database.updateJobInfo(toEdit);
       refresh();
+      WindowHandler.displayAlert("Confirmation", "Success"
+            , "The seleced job's information was updated.");
    }
    
    /**
@@ -590,25 +722,49 @@ public class deskAppController implements Initializable
    
    @ FXML
    /**
-    * checks in or out the selected item depending on the equipment's job and status
+    * filters the checked in list on the front page when the filter button is pressed in
+    * enter is pressed in the text field
     */
-   public void checkInOutSelected()
+   public void filterCheckedIn()
+   {
+      Main.database.reconnect();
+      lastUpdate = System.currentTimeMillis();
+      
+      String filterText = filterField.getText();
+      
+      ArrayList<String> filteredItems = Main.database.getFilteredCheckdIn(filterText);
+      
+      checkedInList.getItems().clear();
+      checkedInList.getItems().addAll(filteredItems);
+      
+   }
+   
+   
+   
+   
+   @ FXML
+   /**
+    * checks in the selected item depending on the equipment's job and status
+    */
+   public void checkInSelected()
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
       
       String id = currID.getText();
       
-      ArrayList<String> itemInfo = Main.database.getItemInfo(id);
-      
       // not recognized
-      if (itemInfo.size() == 0)
+      if (!Main.database.checkEquipmentExists(id))
       {
          WindowHandler.itemNotRecognized(id);
          return;
       }
       
-      switch (itemInfo.get(1))
+      Equipment toCheckIn = new Equipment(Main.database.getItemInfo(id));
+      
+      
+      
+      switch (toCheckIn.getDbrefnum())
       {
          /**
           * Since this list is items that are checked out by the current user, and items
@@ -616,141 +772,66 @@ public class deskAppController implements Initializable
           * 
           * AUTO CHECK IN SHOULD ONLY HAPPEN IF THE ENTIRE PROCESS IS COMPLETED!!!!
           */
-         case "0" : System.out.println("this should only be seen by admin");
-            WindowHandler.displayAlert("Notification", "Uh Oh", "Something went wrong...\nplease continue");
+         case 0 : System.out.println("this should only be seen by admin");
+            WindowHandler.displayAlert("Notification", toCheckIn.toString(),
+                  "Test error, no one should ever see this");
             break;
             
          /**
           * Out of Service
           */
-         case "1" : String[] a1 = {"Reinstate", "Both"};
-            int choice1 = WindowHandler.displayConfirmDialog("This item is currently out of service, would you like to"
-               + " reinstate this item, check out and reinstate, or niether?",2,a1);
-            // broken - reinstate
+         case 1 : String[] a1 = {"Check In"};
+            int choice1 = WindowHandler.displayConfirmDialog("This item is currently marked as "
+                  + "out of service, if it is fixed please press Check In to reinstate"
+               + " reinstate this item, check out and reinstate, or niether?",1,a1);
+            
             if (choice1 == 1)
             {
-               // have user scan item again if the id is the same
-               String idCheck = scanItem();
-               
-               if (idCheck.equals(id))
-               {
-                  autoCheckIn(id);
-                  refresh();
-               }
-               else
-                  WindowHandler.displayMatchFailure();
+               autoCheckIn(id);
+               refresh();
             }
-            // broken - both
-            if (choice1 == 2)
+            else
             {
-            // have user scan item again if the id is the same:
-               String idCheck = scanItem();
-               if (idCheck.equals(id))
-               {
-                  String[] options = {"Create New Job","Add to Existing"};
-                  int result = WindowHandler.displayConfirmDialog("Would you like to create"
-                        + " a new job or add this sample to a preexisting job?",2,options);
-                  Job toEdit = null;
-                  if (result != 1 && result != 2)
-                  {
-                     WindowHandler.displayAlert("Failure", "Addition not successful"
-                           , "The item was NOT successfully added to a job, please try again");
-                     break;
-                  }
-                  if (result == 2)
-                  {
-                     toEdit = chooseExistingJob();
-                     if (toEdit.isReady())
-                     {
-                        Equipment toAdd = new Equipment(Main.database.getItemInfo(id));
-                        toAdd.addToJob(toEdit);
-                        Main.database.updateItemInfo(toAdd);
-                        Main.database.updateExistingJob(toEdit);
-                        refresh();
-                     }
-                     else
-                     {
-                        WindowHandler.displayAlert("Failure", "Addition not successful"
-                              , "The item was NOT successfully added to a job, please try again");
-                     }
-                  }
-                  else
-                  {
-                     toEdit = chooseNewJob();
-                     
-                     if (!toEdit.isReady())
-                     {
-                        WindowHandler.displayAlert("Failure", "Addition not successful"
-                              , "The item was NOT successfully added to a job, please try again");
-                     }
-                     
-                     // update existing
-                     else if (Main.database.checkJobExists(toEdit.getProjectnumber()))
-                     {
-                        Equipment toAdd = new Equipment(Main.database.getItemInfo(id));
-                        toAdd.addToJob(toEdit);
-                        Main.database.updateItemInfo(toAdd);
-                        Main.database.updateExistingJob(toEdit);
-                        refresh();
-                     }
-                     // create new
-                     else
-                     {
-                        // add job to db
-                        int dbrefnum = Main.database.insertNewJob(toEdit);
-                        toEdit.setDbrefnum(dbrefnum);
-                        // get equipment info
-                        Equipment toAdd = new Equipment(Main.database.getItemInfo(id));
-                        toAdd.addToJob(toEdit);
-                        // update db fields
-                        Main.database.updateItemInfo(toAdd);
-                        Main.database.updateExistingJob(toEdit);
-                        refresh();
-                     }
-                  }
-               }
-               else
-               {
-                  WindowHandler.displayMatchFailure();
-               }
+               WindowHandler.displayAlert("Confirmation", "Failure"
+                     , "The seleced item has NOT been checked in.");
             }
-            
             break;
             
          /**
           * Out for Calibration
           */
-         case "2" : String[] a2 = {"Continue"};
-            int choice2 = WindowHandler.displayConfirmDialog("This item is currently checked out for calibration, if"
-               + " the calibration is complete please continue and it will be checked in, if not,"
-               + " please cancel this transaction.",1,a2);
+         case 2 : String[] a2 = {"Continue"};
+            int choice2 = WindowHandler.displayConfirmDialog("This item is currently checked out for"
+                  + " calibration, if is no longer being calibrated please press Check In",1,a2);
             // check back in
             if (choice2 == 1)
             {
-               String idCheck = scanItem();
-               if (id.equals(idCheck))
-               {
-                  Main.database.updateItemCalibrationDate(id);
-                  Main.database.updateItemCheckIn(id);
-                  Main.database.insertAudit(id, 2, Main.user, "admin");
-               }
+               Main.database.updateItemCalibrationDate(id);
+               Main.database.updateItemCheckIn(id);
+               Main.database.insertAudit(id, 2, Main.user, "admin");
+               refresh();
+               WindowHandler.displayAlert("Confirmation", "Success"
+                     , "The seleced item has been checked in.");
+            }
+            else
+            {
+               WindowHandler.displayAlert("Confirmation", "Failure"
+                     , "The seleced item has NOT been checked in.");
             }
             
             break;
          /**
           * Lab Items, unused atm
           */
-         case "3" : 
+         case 3 : 
                break;
          /**
           * Personal Items, only allows checking the item in 
           */
-         case "4" : 
+         case 4 : 
                String[] a3 = {"Check In"};
-               int choice3 = WindowHandler.displayConfirmDialog("You currently have this item checked out"
-                     + " as a personal item, from here you can check the item back into the database"
-                     + " or cancel, if you wish to change ownership of the item use the Edit Item"
-                     + " option in the Edit menu.",1,a3);
+               int choice3 = WindowHandler.displayConfirmDialog("This is a personal item,"
+                     + " do you really want to check it in?",1,a3);
                if (choice3 == 1)
                {
                   autoCheckIn(id);
@@ -758,39 +839,96 @@ public class deskAppController implements Initializable
                }
                else
                {
-                  return;
+                  WindowHandler.displayAlert("Confirmation", "Failure"
+                        , "The seleced item has NOT been checked in.");
                }
                break;
          /**
           * Default - this option is available to everyone
           */
-         default : String[] a4 = {"Check In","Edit Info"};
-            int choice4 = WindowHandler.displayConfirmDialog("You currently have this item checked out, would you like "
-               + "to check it back in or edit your check out information?",2,a4);
+         default : 
             // checked out - check in
+            String[] a4 = {"Check In"};
+            int choice4 = WindowHandler.displayConfirmDialog("Do you wish to check in "
+                  + currID.getText() + " " + currManu.getText() + " " + currName.getText()
+                  ,1,a4);
+            
             if (choice4 == 1)
             {
-               String idCheck = scanItem();
-               
-               if (idCheck.equals(id))
-               {
-                  autoCheckIn(id);
-                  refresh();
-               }
-               else
-                  WindowHandler.displayMatchFailure();
+               autoCheckIn(id);
+               refresh();
             }
-            // checked out - edit
-            else if (choice4 == 2)
+            else
             {
-               Equipment toAdd = new Equipment(Main.database.getItemInfo(id));
-               Job toEdit = new Job(Main.database.getJobInfo(toAdd.getDbrefnum()));
-               
-               toEdit = WindowHandler.displayNewJobPane(toEdit);
-               Main.database.updateExistingJob(toEdit);
+               WindowHandler.displayAlert("Confirmation", "Failure"
+                     , "The seleced item has NOT been checked in.");
             }
             break;
       }
+   }
+   
+   @ FXML
+   /**
+    * checks out the selected item on the front page
+    * TODO : messages for items in preset jobs (1,2,3,4)
+    */
+   public void checkOutSelected()
+   {
+      Main.database.reconnect();
+      lastUpdate = System.currentTimeMillis();
+      
+      String id = currID.getText();
+      
+      id = scanItem(id);
+      
+      if (!Main.database.checkEquipmentExists(id))
+      {
+         WindowHandler.displayAlert("Failure", "Barcode not recognized"
+               , "The item was NOT successfully scanned, please try again.");
+         return;
+      }
+      
+      Equipment toCheckOut = new Equipment(Main.database.getItemInfo(id));
+      if (toCheckOut.getDbrefnum() > 10 || toCheckOut.getDbrefnum() == 4)
+      {
+         WindowHandler.displayAlert("Error", "You already have this item checked out..."
+               , "This item is already checked out, cannot complete request.");
+         return;
+      }
+      else if (toCheckOut.getDbrefnum() == 4)
+      {
+         String[] options = {"Continue"};
+         int choice = WindowHandler.displayConfirmDialog("You have selected one of your personal items"
+               + " for check out, if this was in error, please cancel, otherwise press continue."
+               , 1, options);
+         if (choice == 1)
+         {
+            checkOutItem(id);
+         }
+         return;
+      }
+      else
+      {
+         checkOutItem(id);
+      }
+   }
+   
+   @ FXML
+   /**
+    * brings up edit item window for item from list on front page
+    */
+   public void editSelected()
+   {
+      Main.database.reconnect();
+      lastUpdate = System.currentTimeMillis();
+      
+      // get the data from the selected item - this shouldn't cause any errors and is
+      // faster than depending on which list is focused
+      String id = currID.getText();
+      
+      id = scanItem(id);
+      
+      editItem(id);
    }
    
    @ FXML
@@ -803,7 +941,7 @@ public class deskAppController implements Initializable
       lastUpdate = System.currentTimeMillis();
       
       Equipment toCreate = new Equipment();
-      String id = ScanningHandler.scan();
+      String id = ScanningHandler.scan(null);
       if (id.equals(""))
       {
          WindowHandler.displayAlert("Failure", "Barcode not recognized"
@@ -817,10 +955,20 @@ public class deskAppController implements Initializable
       {
          toCreate = createNewItem(toCreate);
       }
-      else
-      {
-         toCreate = new Equipment(Main.database.getItemInfo(toCreate.getId()));
-      }
+      checkOutItem(id);
+   }
+   
+   /**
+    * TODO : get rid of big messages
+    * @param id
+    */
+   private void checkOutItem(String id)
+   {
+      Main.database.reconnect();
+      lastUpdate = System.currentTimeMillis();
+      
+      Equipment toCreate = new Equipment(Main.database.getItemInfo(id));
+      
       // checking if the item needs calibration or is broken
       if (Main.database.checkEquipmentCalibration(id))
       {
@@ -868,9 +1016,8 @@ public class deskAppController implements Initializable
       
       String[] options = {"New Job","Existing Job","Personal"};
       int result = WindowHandler.displayConfirmDialog("Would you like to create"
-            + " a new job or add this item to a preexisting job? If you only needed"
-            + " to scan the item into the database please press cancel and accept the following"
-            + " error message.",3,options);
+            + " a new job, add this item to a preexisting job, or add as a personal item?"
+            ,3,options);
       Job toEdit = new Job();
       if (result < 1 || result > 3)
       {
@@ -887,6 +1034,8 @@ public class deskAppController implements Initializable
             Main.database.updateItemInfo(toCreate);
             Main.database.updateExistingJob(toEdit);
             refresh();
+            WindowHandler.displayAlert("Confirmation", "Success"
+                  , "The seleced item has been checked out.");
          }
          else
          {
@@ -925,6 +1074,8 @@ public class deskAppController implements Initializable
             Main.database.updateItemInfo(toCreate);
             Main.database.updateExistingJob(toEdit);
             refresh();
+            WindowHandler.displayAlert("Confirmation", "Success"
+                  , "The seleced item has been checked out.");
          }
          // create new
          else
@@ -938,6 +1089,8 @@ public class deskAppController implements Initializable
             Main.database.updateItemInfo(toCreate);
             Main.database.updateExistingJob(toEdit);
             refresh();
+            WindowHandler.displayAlert("Confirmation", "Success"
+                  , "The seleced item has been checked out.");
          }
       }
    }
@@ -957,7 +1110,7 @@ public class deskAppController implements Initializable
       
       do
       {
-         scans.add(ScanningHandler.scan());
+         scans.add(ScanningHandler.scan(null));
       } while (!scans.get(scans.size()-1).equals(""));
       scans.remove(scans.size()-1);
       
@@ -1037,6 +1190,8 @@ public class deskAppController implements Initializable
                Main.database.updateExistingJob(toEdit);
                refresh();
             }
+            WindowHandler.displayAlert("Confirmation", "Success"
+                  , "The seleced items have been checked out.");
          }
          else
          {
@@ -1066,10 +1221,14 @@ public class deskAppController implements Initializable
                Main.database.updateExistingJob(toEdit);
                refresh();
             }
+            WindowHandler.displayAlert("Confirmation", "Success"
+                  , "The seleced items have been checked out.");
          }
          // create new
          else
          {
+            int dbrefnum = Main.database.insertNewJob(toEdit);
+            toEdit.setDbrefnum(dbrefnum);
             for (String id : scans)
             {
                Equipment toAdd = new Equipment(Main.database.getItemInfo(id));
@@ -1078,9 +1237,135 @@ public class deskAppController implements Initializable
                Main.database.updateExistingJob(toEdit);
                refresh();
             }
+            WindowHandler.displayAlert("Confirmation", "Success"
+                  , "The seleced items have been checked out.");
          }
       }
    }
+   
+   @ FXML
+   /**
+    * adds an item to the database
+    */
+   public void addItem()
+   {
+      Main.database.reconnect();
+      lastUpdate = System.currentTimeMillis();
+      
+      String id = scanItem(null);
+      
+      if (id.equals(""))
+      {
+         WindowHandler.displayAlert("Failure", "Barcode not recognized"
+               , "The item was NOT successfully scanned, please try again.");
+         return;
+      }
+      
+      Equipment toCreate = new Equipment();
+      toCreate.setId(id);
+      
+      if (Main.database.checkEquipmentExists(id))
+      {
+         WindowHandler.displayAlert("Failure", "Duplicate Item"
+               , "A piece of equipment with this barcode already exists in the database"
+               + ", please change the id and try again.");
+         return;
+      }
+      
+      toCreate = createNewItem(toCreate);
+      refresh();
+      WindowHandler.displayAlert("Confirmation", "Success"
+            , "The item was added to the database.");
+   }
+   
+   @ FXML
+   /**
+    * Refreshes the jobList page in the application, separated because this page may take
+    * more time to refresh than other pages
+    */
+   public void refreshJobList()
+   {
+      Main.database.reconnect();
+      lastUpdate = System.currentTimeMillis();
+      // get all jobs which have items... search items for dbrefnum and put in hash set
+      // for all dbrefnum, load jobs into list
+      ArrayList<String> activeJobs = Main.database.getAllActiveJobs();
+      jobListJobs.getItems().clear();
+      jobListJobs.getItems().addAll(activeJobs);
+      jobListJobs.getSelectionModel().select(0);
+      selectJobJobList();
+      
+      jobListItems.getSelectionModel().select(0);
+      selectItemJobList();
+   }
+   
+   @ FXML
+   /**
+    * triggers when selecting a job in the jobList tab
+    */
+   public void selectJobJobList()
+   {
+      Main.database.reconnect();
+      lastUpdate = System.currentTimeMillis();
+      
+      if (jobListJobs.getSelectionModel().getSelectedItem() == null)
+         return;
+      
+      // the code below deals with getting all the equipment on this job and displaying it
+      String jobNum = jobListJobs.getSelectionModel().getSelectedItem();
+      jobNum = jobNum.substring(0, jobNum.indexOf(' '));
+      int dbrefnum = Main.database.getJobDBrefnum(jobNum);
+      
+      ArrayList<Equipment> equipment = Main.database.getItemsForJob(dbrefnum);
+      
+      TreeSet<String> itemNames = new TreeSet<>();
+      for (Equipment e : equipment)
+      {
+         itemNames.add(e.getId() + " " + e.getManufacturer() + " " + e.getName());
+      }
+      jobListItems.getItems().clear();
+      jobListItems.getItems().addAll(itemNames);
+      
+      Job job = new Job(Main.database.getJobInfo(dbrefnum));
+      
+      jobListName.setText(job.getProjname());
+      jobListNum.setText(job.getProjectnumber());
+      jobListDept.setText(job.getDept_client());
+      jobListAct.setText(job.getActivity());
+      jobListStartDate.setText(job.getDatetime().toString());
+      jobListLocale.setText(job.getLocation());
+      jobListComments.setText(job.getComments());
+      
+   }
+   
+   @FXML
+   /**
+    * triggers when selecting a piece of equiment in the jobList tab
+    */
+   public void selectItemJobList()
+   {
+      Main.database.reconnect();
+      lastUpdate = System.currentTimeMillis();
+      
+      if (jobListItems.getSelectionModel().getSelectedItem() == null)
+         return;
+      
+      String id = jobListItems.getSelectionModel().getSelectedItem();
+      
+      id = id.substring(0,id.indexOf(' '));
+      
+      Equipment item = new Equipment(Main.database.getItemInfo(id));
+      
+      jobListID.setText(item.getId());
+      jobListMan.setText(item.getManufacturer());
+      jobListItemName.setText(item.getName());
+      jobListCheckedOut.setText(item.getCheckedout().toString());
+      jobListRetDate.setText(item.getEstimatedreturn().toString());
+      jobListUser.setText(Main.database.getFullname(item.getCurrentuser()));
+      jobListItemComments.setText(item.getComments());
+      
+   }
+   
    
    /**
     * updates the list of checked out items and selects the first item if possible
@@ -1136,8 +1421,11 @@ public class deskAppController implements Initializable
          pastDueAll.getItems().add(s);
    }
    
+   @SuppressWarnings("unused")
+   @Deprecated
    /**
     * updates the list of all checked out items, personal items 
+    * TODO : delete
     */
    private void updateCheckedOutAll()
    {
@@ -1151,21 +1439,38 @@ public class deskAppController implements Initializable
    }
    
    /**
+    * updates the list of all checked in items on the front page
+    */
+   private void updateCheckedIn()
+   {
+      ArrayList<String> checkedIn = new ArrayList<>();
+      
+      checkedIn = Main.database.getAllCheckedIn();
+      
+      checkedInList.getItems().clear();
+      for (String s : checkedIn)
+         checkedInList.getItems().add(s);
+   }
+   
+   /**
     * sets info on startup (workaround because it stays as placeholder text for some reason)
     */
    private void setCurrInfo()
    {
       String name = checkedOutList.getSelectionModel().getSelectedItem();
-      if (name == null || name.equals("") || name.equals(null))
+      if (name == null || name.equals("") || name.equals("Checked Out on Jobs")
+            || name.equals("Personal  Items"))
       {
          currUser.setText("");
          currID.setText("");
          currManu.setText("");
          currName.setText("");
          currDate.setText("");
+         currRetDate.setText("");
          currNum.setText("");
          currAct.setText("");
          currDept.setText("");
+         currNextCal.setText("");
          currComments.setText("");
          return;
       }
@@ -1200,6 +1505,14 @@ public class deskAppController implements Initializable
          currAct.setText(currJob.getActivity());
          currDept.setText(currJob.getDept_client());
       }
+      if (currItem.getEstimatedreturn().getTime() <= 0)
+         currRetDate.setText("none");
+      else
+         currRetDate.setText(currItem.getEstimatedreturn().toString());
+      if (currItem.getCalibrationinterval() == 0)
+         currNextCal.setText("none");
+      else
+         currNextCal.setText(currItem.getNextcalibrationdate().toString());
       currComments.setText(currItem.getComments());
    }
    
@@ -1207,9 +1520,9 @@ public class deskAppController implements Initializable
    /**
     * handles the scanning of an item throughout the application, returns the id
     */
-   private String scanItem()
+   private String scanItem(String id)
    {
-      return ScanningHandler.scan();
+      return ScanningHandler.scan(id);
    }
    
    /**
@@ -1238,7 +1551,7 @@ public class deskAppController implements Initializable
    private void autoCheckIn(String id)
    {
       Main.database.updateItemCheckIn(id);
-      
+      refresh();
       WindowHandler.displayAlert("Confirmation", "Success"
             , "The seleced item has been checked back in.");
    }

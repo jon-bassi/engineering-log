@@ -27,7 +27,7 @@ public class Main extends Application
    
    public static EngDB database;
    
-   public static final String build = "1.1.0 beta";
+   public static final String build = "1.3.0 beta";
    
    private final Boolean DEBUG = false;
    

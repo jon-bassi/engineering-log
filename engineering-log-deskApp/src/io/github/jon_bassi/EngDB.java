@@ -16,6 +16,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.TreeSet;
 
 /**
@@ -303,8 +305,14 @@ public class EngDB
    {
       try
       {
-         String sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser = '" + Main.user + "'";
+         String sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser = '" + Main.user + "'"
+               + " AND dbrefnum <> '4'";
          ArrayList<String> items = new ArrayList<>();
+         
+         items.add("Checked");
+         items.add("Jobs");
+         items.add("Out on");
+         
          ResultSet rs = runSql(sql);
          
          while (rs.next())
@@ -314,6 +322,77 @@ public class EngDB
             {
                items.add(rs.getString(i+1));
             }
+         }
+         items.add("Personal");
+         items.add("Items");
+         items.add("");
+         sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser = '" + Main.user + "'"
+               + " AND dbrefnum = '4'";
+         rs = runSql(sql);
+         
+         while (rs.next())
+         {
+            int cols = rs.getMetaData().getColumnCount();
+            for (int i = 0; i < cols; i++)
+            {
+               items.add(rs.getString(i+1));
+            }
+         }
+         
+         return items;
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      return null;
+   }
+   
+   /**
+    * returns a list of all items checked in to the database
+    * @return
+    */
+   public ArrayList<String> getAllCheckedIn()
+   {
+      try
+      {
+         String sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser"
+               + " = 'admin'";
+         ArrayList<String> items = new ArrayList<>();
+         ResultSet rs = runSql(sql);
+         
+         while (rs.next())
+         {
+            items.add(rs.getString(1) + " " + rs.getString(3) + " " + rs.getString(2));
+         }
+         
+         return items;
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      return null;
+   }
+   
+   
+   public ArrayList<String> getFilteredCheckdIn(String filterText)
+   {
+      try
+      {
+         String sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser"
+               + " = 'admin' AND (name LIKE '%" + filterText + "%' OR "
+               + " manufacturer LIKE '%" + filterText + "%' OR id LIKE '%" + filterText + "%')";
+         ArrayList<String> items = new ArrayList<>();
+         ResultSet rs = runSql(sql);
+         
+         while (rs.next())
+         {
+            items.add(rs.getString(1) + " " + rs.getString(3) + " " + rs.getString(2));
          }
          
          return items;
@@ -380,6 +459,52 @@ public class EngDB
       {
          ExceptionHandler.displayException(e);
       } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      return null;
+   }
+   
+   /**
+    * 
+    * @return
+    */
+   public ArrayList<String> getAllActiveJobs()
+   {
+      try
+      {
+         String sql = "SELECT dbrefnum FROM equipment WHERE checkedout <> '" + new Timestamp(0) + "'";
+         ResultSet rs = runSql(sql);
+         
+         HashSet<Integer> dbrefnums = new HashSet<>();
+         while (rs.next())
+         {
+            dbrefnums.add(rs.getInt(1));
+         }
+         
+         dbrefnums.remove(0);
+         dbrefnums.remove(1);
+         dbrefnums.remove(2);
+         dbrefnums.remove(3);
+         dbrefnums.remove(4);
+         
+         
+         Iterator<Integer> itr = dbrefnums.iterator();
+         ArrayList<String> jobs = new ArrayList<>();
+         while (itr.hasNext())
+         {
+            Integer dbrefnum = itr.next();
+            sql = "SELECT projname,projectnumber FROM jobs WHERE dbrefnum = '" + dbrefnum +"'";
+            rs = runSql(sql);
+            if (rs.next())
+            {
+               jobs.add(rs.getString(2) + " " + rs.getString(1));
+            }
+         }
+         
+         return jobs;
+         
+      } catch (SQLException e)
       {
          ExceptionHandler.displayException(e);
       }
@@ -683,6 +808,70 @@ public class EngDB
    }
    
    /**
+    * Edits the information for a given piece of equipment
+    * @param toEdit
+    */
+   public void updateItemInfo(Equipment toEdit)
+   {
+      try {
+         String sql = "UPDATE equipment SET dbrefnum = '"  + toEdit.getDbrefnum() + "'"
+               + ", name = (?), manufacturer = (?), currentuser = (?), checkedout = (?)"
+               + ", estimatedreturn = (?), comments = (?), calibrationinterval = (?)"
+               + ", nextcalibrationdate = (?) WHERE id = '" + toEdit.getId() + "'";
+         
+         PreparedStatement stmt = con.prepareStatement(sql);
+         
+         stmt.setString(1, toEdit.getName());
+         stmt.setString(2, toEdit.getManufacturer());
+         stmt.setString(3, toEdit.getCurrentuser());
+         stmt.setTimestamp(4, toEdit.getCheckedout());
+         stmt.setDate(5, toEdit.getEstimatedreturn());
+         stmt.setString(6, toEdit.getComments());
+         stmt.setLong(7, toEdit.getCalibrationinterval());
+         if (toEdit.getCalibrationinterval() == 0)
+            stmt.setDate(8, new Date(0L));
+         else
+            stmt.setDate(8, toEdit.getNextcalibrationdate());
+         
+         stmt.executeUpdate();
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+   }
+   
+   /**
+    * Edits the information for the given piece of equipment during a checkout
+    * @param id
+    * @param dbrefnum
+    * @param time
+    */
+   private void updateItemInfo(Equipment eq, int dbrefnum, Date returndate)
+   {
+      try
+      {
+         insertAudit(eq.getId(),dbrefnum,"admin",Main.user);
+         if (eq.getCheckedout().getTime() == 0)
+            eq.setCheckedout(new Timestamp(System.currentTimeMillis()));
+         String sql = "UPDATE equipment SET dbrefnum = '" + dbrefnum + "',"
+               + "currentuser = '" + Main.user + "', checkedout"
+               + " = '" + eq.getCheckedout() + "', estimatedreturn ="
+               + " '" + returndate + "' WHERE id = '" + eq.getId() + "'";
+         PreparedStatement stmt = con.prepareStatement(sql);
+         stmt.execute();
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+   }
+   
+   /**
     * updates the information for a job that already exists and updates information on a 
     * piece of equipment
     * @param jobInfo
@@ -758,72 +947,7 @@ public class EngDB
       }
    }
    
-   /**
-    * Edits the information for a given piece of equipment
-    * @param toEdit
-    */
-   public void updateItemInfo(Equipment toEdit)
-   {
-      try {
-         String sql = "UPDATE equipment SET dbrefnum = '"  + toEdit.getDbrefnum() + "'"
-               + ", name = (?), manufacturer = (?), currentuser = (?), checkedout = (?)"
-               + ", estimatedreturn = (?), comments = (?), calibrationinterval = (?)"
-               + ", nextcalibrationdate = (?) WHERE id = '" + toEdit.getId() + "'";
-         
-         PreparedStatement stmt = con.prepareStatement(sql);
-         
-         stmt.setString(1, toEdit.getName());
-         stmt.setString(2, toEdit.getManufacturer());
-         stmt.setString(3, toEdit.getCurrentuser());
-         if (toEdit.getCheckedout().getTime() == 0)
-            stmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
-         else
-            stmt.setTimestamp(4, toEdit.getCheckedout());
-         stmt.setDate(5, toEdit.getEstimatedreturn());
-         stmt.setString(6, toEdit.getComments());
-         stmt.setLong(7, toEdit.getCalibrationinterval());
-         if (toEdit.getCalibrationinterval() == 0)
-            stmt.setDate(8, new Date(0L));
-         else
-            stmt.setDate(8, toEdit.getNextcalibrationdate());
-         
-         stmt.executeUpdate();
-      } catch (SQLException e)
-      {
-         ExceptionHandler.displayException(e);
-      } catch (Exception e)
-      {
-         ExceptionHandler.displayException(e);
-      }
-   }
-   
-   /**
-    * Edits the information for the given piece of equipment during a checkout
-    * @param id
-    * @param dbrefnum
-    * @param time
-    */
-   private void updateItemInfo(Equipment eq, int dbrefnum, Date returndate)
-   {
-      try
-      {
-         insertAudit(eq.getId(),dbrefnum,"admin",Main.user);
-         if (eq.getCheckedout().getTime() == 0)
-            eq.setCheckedout(new Timestamp(System.currentTimeMillis()));
-         String sql = "UPDATE equipment SET dbrefnum = '" + dbrefnum + "',"
-               + "currentuser = '" + Main.user + "', checkedout"
-               + " = '" + eq.getCheckedout() + "', estimatedreturn ="
-               + " '" + returndate + "' WHERE id = '" + eq.getId() + "'";
-         PreparedStatement stmt = con.prepareStatement(sql);
-         stmt.execute();
-      } catch (SQLException e)
-      {
-         ExceptionHandler.displayException(e);
-      } catch (Exception e)
-      {
-         ExceptionHandler.displayException(e);
-      }
-   }
+
    
    /**
     * checks out an item when creating a new job

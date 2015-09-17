@@ -46,9 +46,9 @@
                         <Insets bottom="10.0" fx:id="x4" />
                       </GridPane.margin>
                     </Label>
-                    <ListView fx:id="checkedOutList" onMouseClicked="#viewCurrInfo" prefHeight="213.0" prefWidth="657.0" GridPane.rowIndex="1">
+                    <ListView fx:id="checkedOutList" onKeyReleased="#viewCurrInfo" onMouseClicked="#viewCurrInfo" prefHeight="213.0" prefWidth="657.0" GridPane.rowIndex="1">
                                  <GridPane.margin>
-                                    <Insets left="10.0" />
+                                    <Insets bottom="30.0" left="10.0" />
                                  </GridPane.margin></ListView>
                     <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
                       <children>
@@ -62,8 +62,8 @@
                             <Label text="Manufacturer:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
                             <Label text="Name:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
                             <Label text="Date Checked Out:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-                            <Label text="Job Number:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
-                            <Label text="Comments:" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="TOP">
+                            <Label text="Job Number:" GridPane.halignment="RIGHT" GridPane.margin="$x1" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                            <Label text="Comments:" GridPane.halignment="RIGHT" GridPane.rowIndex="10" GridPane.valignment="TOP">
                               <GridPane.margin>
                                 <Insets right="10.0" top="5.0" />
                               </GridPane.margin>
@@ -75,9 +75,9 @@
                             </Label>
                             <Label fx:id="currManu" text="HDR" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="2" />
                             <Label fx:id="currName" text="placeholder" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="3" />
-                            <Label fx:id="currDate" text="2000-01-01 00:00:00" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="4" />
-                            <Label fx:id="currNum" text="0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="5" />
-                            <Label text="Department:" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+                            <Label fx:id="currDate" text="2000-01-01 00:00:00.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="4" />
+                            <Label fx:id="currNum" text="0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.margin="$x2" GridPane.rowIndex="6" />
+                            <Label text="Department:" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
                               <GridPane.margin>
                                 <Insets right="10.0" fx:id="x1" />
                               </GridPane.margin>
@@ -92,205 +92,7 @@
                                 <Insets left="10.0" fx:id="x2" />
                               </GridPane.margin>
                             </Label>
-                            <Label fx:id="currDept" text="dept" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x2" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Activity:" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="currAct" text="act" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x2" />
-                              </GridPane.margin>
-                            </Label>
-                            <TextArea fx:id="currComments" editable="false" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                              <GridPane.margin>
-                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" fx:id="x3" />
-                              </GridPane.margin>
-                            </TextArea>
-                          </children>
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                        </GridPane>
-                        <Button mnemonicParsing="false" onAction="#checkInOutSelected" text="Check In/Out/Edit Selected Item" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                          <GridPane.margin>
-                            <Insets right="10.0" fx:id="x1" />
-                          </GridPane.margin>
-                        </Button>
-                      </children>
-                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="539.3770751953125" minWidth="10.0" prefWidth="480.5601806640625" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
-                      </columnConstraints>
-                      <rowConstraints>
-                        <RowConstraints maxHeight="272.0" minHeight="10.0" prefHeight="224.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="30.0" minHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      </rowConstraints>
-                    </GridPane>
-                    <Label text="More information" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.margin="$x4" GridPane.valignment="BOTTOM" />
-                    <ListView fx:id="calibrationList" onMouseClicked="#viewCurrInfo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
-                      <GridPane.margin>
-                        <Insets bottom="10.0" left="10.0" />
-                      </GridPane.margin>
-                    </ListView>
-                    <Label text="Upcoming Calibrations" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
-                      <GridPane.margin>
-                        <Insets bottom="10.0" fx:id="x4" />
-                      </GridPane.margin>
-                    </Label>
-                    <GridPane GridPane.columnIndex="1" GridPane.rowIndex="3">
-                      <children>
-                        <Button mnemonicParsing="false" onAction="#checkOutItem" text="Single Item" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP">
-                          <GridPane.margin>
-                            <Insets top="10.0" />
-                          </GridPane.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#checkOutItems" text="Multiple Items" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
-                          <GridPane.margin>
-                            <Insets top="10.0" />
-                          </GridPane.margin>
-                        </Button>
-                        <Label text="Add/Check Out" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
-                          <GridPane.margin>
-                            <Insets bottom="10.0" fx:id="x4" />
-                          </GridPane.margin>
-                        </Label>
-                      </children>
-                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      </columnConstraints>
-                      <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      </rowConstraints>
-                    </GridPane>
-                  </children>
-                  <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  </columnConstraints>
-                  <padding>
-                    <Insets bottom="10.0" left="10.0" right="10.0" />
-                  </padding>
-                  <rowConstraints>
-                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="441.0" minHeight="10.0" prefHeight="258.2657775878906" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="215.0" minHeight="10.0" prefHeight="46.734222412109375" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="429.0" minHeight="8.0" prefHeight="270.6690979003906" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="449.0" minHeight="10.0" prefHeight="39.807373046875" vgrow="SOMETIMES" />
-                  </rowConstraints>
-                </GridPane>
-              </children>
-            </AnchorPane>
-          </content>
-        </Tab>
-        <Tab text="Checked Out Items">
-          <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-              <children>
-                <GridPane prefHeight="656.0" prefWidth="1152.0">
-                  <children>
-                    <ListView fx:id="checkedOutAll" onMouseClicked="#setCheckedOutInfo">
-                      <GridPane.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                      </GridPane.margin>
-                    </ListView>
-                    <GridPane GridPane.columnIndex="1">
-                      <children>
-                        <GridPane GridPane.columnIndex="1">
-                          <children>
-                            <Label text="Barcode ID:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Manufacturer:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Name:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Date Checked Out:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Job Number:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Comments:" GridPane.halignment="RIGHT" GridPane.rowIndex="9" GridPane.valignment="TOP">
-                              <GridPane.margin>
-                                <Insets right="10.0" top="5.0" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="checkedOutCurrID" text="0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x21" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="checkedOutCurrManu" text="HDR" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x21" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="checkedOutCurrName" text="placeholder" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x21" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="checkedOutCurrDate" text="2000-01-01 00:00:00" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x21" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="checkedOutCurrNum" text="0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="6">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x21" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Department:" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Checked Out To:" GridPane.halignment="RIGHT">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="checkedOutCurrUser" text="user" GridPane.columnIndex="1">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x2" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="checkedOutCurrDept" text="dept" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                            <Label fx:id="currDept" text="dept" GridPane.columnIndex="1" GridPane.rowIndex="7">
                               <GridPane.margin>
                                 <Insets left="10.0" fx:id="x2" />
                               </GridPane.margin>
@@ -300,21 +102,41 @@
                                 <Insets right="10.0" fx:id="x1" />
                               </GridPane.margin>
                             </Label>
-                            <Label fx:id="checkedOutCurrAct" text="act" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                            <Label fx:id="currAct" text="act" GridPane.columnIndex="1" GridPane.rowIndex="8">
                               <GridPane.margin>
                                 <Insets left="10.0" fx:id="x2" />
                               </GridPane.margin>
                             </Label>
-                            <TextArea fx:id="checkedOutCurrComments" editable="false" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.margin="$x3" GridPane.rowIndex="9" />
+                            <TextArea fx:id="currComments" editable="false" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                              <GridPane.margin>
+                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" fx:id="x3" />
+                              </GridPane.margin>
+                            </TextArea>
                                           <Label text="Estimated Return Date:" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                                              <GridPane.margin>
-                                                <Insets right="10.0" />
+                                                <Insets />
                                              </GridPane.margin>
+                                             <padding>
+                                                <Insets right="10.0" />
+                                             </padding>
                                           </Label>
-                                          <Label fx:id="checkedOutRetDate" text="2000-01-01 00:00:00" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                          <Label text="Next Calibration Date:" GridPane.halignment="RIGHT" GridPane.rowIndex="9" GridPane.valignment="CENTER">
+                                             <padding>
+                                                <Insets right="10.0" />
+                                             </padding>
+                                          </Label>
+                                          <Label fx:id="currRetDate" text="2000-01-01 00:00:00.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
                                              <padding>
                                                 <Insets left="10.0" />
                                              </padding>
+                                          </Label>
+                                          <Label fx:id="currNextCal" text="2000-01-01 00:00:00" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
                                           </Label>
                           </children>
                           <columnConstraints>
@@ -331,17 +153,28 @@
                             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0" vgrow="SOMETIMES" />
                           </rowConstraints>
-                          <GridPane.margin>
-                            <Insets top="10.0" />
-                          </GridPane.margin>
                         </GridPane>
-                        <Button mnemonicParsing="false" text="Does Nothing" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP">
-                          <GridPane.margin>
-                            <Insets right="3.0" top="10.0" fx:id="x11" />
-                          </GridPane.margin>
-                        </Button>
+                                    <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Button mnemonicParsing="false" onAction="#editSelected" text="Edit Selected" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                              <Button mnemonicParsing="false" onAction="#checkInSelected" text="Check In Selected" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                <GridPane.margin>
+                                  <Insets fx:id="x1" />
+                                </GridPane.margin>
+                              </Button>
+                                       </children>
+                                    </GridPane>
                       </children>
                       <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
@@ -349,169 +182,101 @@
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
                       </columnConstraints>
                       <rowConstraints>
-                        <RowConstraints maxHeight="272.0" minHeight="10.0" prefHeight="252.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="248.73727416992188" minHeight="0.0" prefHeight="230.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="272.0" minHeight="10.0" prefHeight="224.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       </rowConstraints>
                     </GridPane>
-                  </children>
-                  <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="660.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="559.80224609375" minWidth="10.0" prefWidth="300.2952880859375" />
-                  </columnConstraints>
-                  <rowConstraints>
-                    <RowConstraints maxHeight="497.0" minHeight="10.0" prefHeight="481.8758544921875" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="255.0" minHeight="10.0" prefHeight="173.1241455078125" vgrow="SOMETIMES" />
-                  </rowConstraints>
-                </GridPane>
-              </children>
-            </AnchorPane>
-          </content>
-        </Tab>
-        <Tab text="Past Due Items">
-          <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-              <children>
-                <GridPane prefHeight="656.0" prefWidth="1152.0">
-                  <children>
-                    <ListView fx:id="pastDueAll" onMouseClicked="#setPastDueInfo">
+                    <Label text="More information" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.margin="$x4" GridPane.valignment="BOTTOM" />
+                    <ListView fx:id="checkedInList" onKeyReleased="#viewCurrInfo" onMouseClicked="#viewCurrInfo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
                       <GridPane.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        <Insets bottom="10.0" left="10.0" />
                       </GridPane.margin>
                     </ListView>
-                    <GridPane GridPane.columnIndex="1">
+                    <Label text="Checked In Items" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                      <GridPane.margin>
+                        <Insets bottom="10.0" fx:id="x4" />
+                      </GridPane.margin>
+                    </Label>
+                    <GridPane GridPane.columnIndex="1" GridPane.rowIndex="3">
                       <children>
-                        <GridPane GridPane.columnIndex="1">
-                          <children>
-                            <Label text="Barcode ID:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x11" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Manufacturer:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Name:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Date Checked Out:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Job Number:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Comments:" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="TOP">
-                              <GridPane.margin>
-                                <Insets right="10.0" top="5.0" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="pastDueCurrID" text="0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x211" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="pastDueCurrManu" text="HDR" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x211" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="pastDueCurrName" text="placeholder" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x211" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="pastDueCurrDate" text="2000-01-01 00:00:00" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x211" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="pastDueCurrNum" text="0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x211" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Department:" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Checked Out To:" GridPane.halignment="RIGHT">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="pastDueCurrUser" text="user" GridPane.columnIndex="1">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x2" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="pastDueCurrDept" text="dept" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x2" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label text="Activity:" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
-                              <GridPane.margin>
-                                <Insets right="10.0" fx:id="x1" />
-                              </GridPane.margin>
-                            </Label>
-                            <Label fx:id="pastDueCurrAct" text="act" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                              <GridPane.margin>
-                                <Insets left="10.0" fx:id="x2" />
-                              </GridPane.margin>
-                            </Label>
-                            <TextArea fx:id="pastDueCurrComments" editable="false" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.margin="$x3" GridPane.rowIndex="8" />
-                          </children>
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        <Button mnemonicParsing="false" onAction="#checkOutItem" text="Single Item" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP">
                           <GridPane.margin>
                             <Insets top="10.0" />
                           </GridPane.margin>
-                        </GridPane>
-                        <Button mnemonicParsing="false" text="&lt;&gt;" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#checkOutItems" text="Multiple Items" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
                           <GridPane.margin>
-                            <Insets right="3.0" top="10.0" fx:id="x111" />
+                            <Insets top="10.0" />
                           </GridPane.margin>
                         </Button>
+                        <Label text="Check Out" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+                          <GridPane.margin>
+                            <Insets bottom="10.0" fx:id="x4" />
+                          </GridPane.margin>
+                        </Label>
+                                    <Label text="Add Equipment" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+                                       <GridPane.margin>
+                                          <Insets bottom="10.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <Button mnemonicParsing="false" onAction="#addItem" text="Add Item" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                                       <GridPane.margin>
+                                          <Insets top="10.0" />
+                                       </GridPane.margin>
+                                    </Button>
                       </children>
                       <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="539.3770751953125" minWidth="10.0" prefWidth="480.5601806640625" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       </columnConstraints>
                       <rowConstraints>
-                        <RowConstraints maxHeight="272.0" minHeight="10.0" prefHeight="233.43145751953125" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="248.73727416992188" minHeight="0.0" prefHeight="247.56854248046875" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       </rowConstraints>
                     </GridPane>
+                              <GridPane GridPane.rowIndex="4">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="286.0" minWidth="10.0" prefWidth="280.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="183.0" minWidth="10.0" prefWidth="103.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="177.0" minWidth="10.0" prefWidth="176.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <TextField fx:id="filterField" onAction="#filterCheckedIn">
+                                       <GridPane.margin>
+                                          <Insets bottom="10.0" left="10.0" />
+                                       </GridPane.margin>
+                                    </TextField>
+                                    <Button mnemonicParsing="false" onAction="#filterCheckedIn" text="Filter" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
+                                       <GridPane.margin>
+                                          <Insets bottom="10.0" left="10.0" />
+                                       </GridPane.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#checkOutSelected" text="Check Out Selected" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                       <GridPane.margin>
+                                          <Insets bottom="10.0" />
+                                       </GridPane.margin>
+                                    </Button>
+                                 </children>
+                              </GridPane>
                   </children>
                   <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="660.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="559.80224609375" minWidth="10.0" prefWidth="300.2952880859375" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   </columnConstraints>
+                  <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" />
+                  </padding>
                   <rowConstraints>
-                    <RowConstraints maxHeight="497.0" minHeight="10.0" prefHeight="481.8758544921875" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="255.0" minHeight="10.0" prefHeight="173.1241455078125" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="441.0" minHeight="10.0" prefHeight="287.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="215.0" minHeight="0.0" prefHeight="7.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="429.0" minHeight="8.0" prefHeight="270.6690979003906" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="449.0" minHeight="10.0" prefHeight="39.807373046875" vgrow="SOMETIMES" />
                   </rowConstraints>
                 </GridPane>
               </children>
@@ -536,7 +301,7 @@
                       <children>
                         <ListView fx:id="searchResults" onMouseClicked="#setSearchedInfo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
                           <GridPane.margin>
-                            <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+                            <Insets left="5.0" right="5.0" top="10.0" />
                           </GridPane.margin>
                         </ListView>
                         <GridPane GridPane.columnIndex="1" GridPane.rowIndex="0">
@@ -630,23 +395,18 @@
                         </Label>
                       </children>
                       <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="331.0" minWidth="10.0" prefWidth="331.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="242.0" minWidth="10.0" prefWidth="162.0" />
                       </columnConstraints>
                       <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       </rowConstraints>
                     </GridPane>
                     <Label text="Equipment Package Check" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
-                    <Label text="W.I.P." GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-                      <font>
-                        <Font size="30.0" />
-                      </font>
-                    </Label>
                   </children>
                   <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="569.0" minWidth="-Infinity" prefWidth="493.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="700.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="569.0" minWidth="-Infinity" prefWidth="361.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="789.0" minWidth="10.0" prefWidth="789.0" />
                   </columnConstraints>
                   <rowConstraints>
                     <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -660,6 +420,623 @@
             </AnchorPane>
           </content>
         </Tab>
+        <Tab text="Upcoming Calibrations">
+          <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <GridPane prefHeight="656.0" prefWidth="1152.0">
+                  <children>
+                    <ListView fx:id="calibrationList" onKeyReleased="#setCalibrationInfo" onMouseClicked="#setCalibrationInfo">
+                      <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                      </GridPane.margin>
+                    </ListView>
+                    <GridPane GridPane.columnIndex="1">
+                      <children>
+                        <GridPane GridPane.columnIndex="1">
+                          <children>
+                            <Label text="Barcode ID:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Manufacturer:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Name:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Date Checked Out:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Job Number:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Comments:" GridPane.halignment="RIGHT" GridPane.rowIndex="10" GridPane.valignment="TOP">
+                              <GridPane.margin>
+                                <Insets right="10.0" top="5.0" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label fx:id="calCurrID" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+                              <GridPane.margin>
+                                <Insets fx:id="x21" />
+                              </GridPane.margin>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                            </Label>
+                            <Label fx:id="calCurrManu" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2">
+                              <GridPane.margin>
+                                <Insets fx:id="x21" />
+                              </GridPane.margin>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                            </Label>
+                            <Label fx:id="calCurrName" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3">
+                              <GridPane.margin>
+                                <Insets fx:id="x21" />
+                              </GridPane.margin>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                            </Label>
+                            <Label fx:id="calCurrDate" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
+                              <GridPane.margin>
+                                <Insets fx:id="x21" />
+                              </GridPane.margin>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                            </Label>
+                            <Label fx:id="calCurrNum" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="6">
+                              <GridPane.margin>
+                                <Insets fx:id="x21" />
+                              </GridPane.margin>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                            </Label>
+                            <Label text="Department:" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Checked Out To:" GridPane.halignment="RIGHT">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label fx:id="calCurrUser" GridPane.columnIndex="1">
+                              <GridPane.margin>
+                                <Insets fx:id="x2" />
+                              </GridPane.margin>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                            </Label>
+                            <Label fx:id="calCurrDept" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                              <GridPane.margin>
+                                <Insets fx:id="x2" />
+                              </GridPane.margin>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                            </Label>
+                            <Label text="Activity:" GridPane.halignment="RIGHT" GridPane.rowIndex="8">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label fx:id="calCurrAct" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                              <GridPane.margin>
+                                <Insets fx:id="x2" />
+                              </GridPane.margin>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                            </Label>
+                            <TextArea fx:id="calComments" editable="false" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.margin="$x3" GridPane.rowIndex="10" />
+                                          <Label text="Estimated Return Date:" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="calRetDate" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Next Calibration Date:" GridPane.halignment="RIGHT" GridPane.rowIndex="9" GridPane.valignment="CENTER">
+                                             <padding>
+                                                <Insets right="10.0" />
+                                             </padding>
+                                          </Label>
+                                          <Label fx:id="calNextCal" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
+                                          </Label>
+                          </children>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="80.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                          <GridPane.margin>
+                            <Insets top="10.0" />
+                          </GridPane.margin>
+                        </GridPane>
+                      </children>
+                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="539.3770751953125" minWidth="10.0" prefWidth="480.5601806640625" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                        <RowConstraints maxHeight="292.0" minHeight="10.0" prefHeight="292.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="248.73727416992188" minHeight="0.0" prefHeight="190.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                    </GridPane>
+                  </children>
+                  <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="660.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="559.80224609375" minWidth="10.0" prefWidth="300.2952880859375" />
+                  </columnConstraints>
+                  <rowConstraints>
+                    <RowConstraints maxHeight="497.0" minHeight="10.0" prefHeight="481.8758544921875" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="255.0" minHeight="10.0" prefHeight="173.1241455078125" vgrow="SOMETIMES" />
+                  </rowConstraints>
+                </GridPane>
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab text="Past Due Items">
+          <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <GridPane prefHeight="656.0" prefWidth="1152.0">
+                  <children>
+                    <ListView fx:id="pastDueAll" onKeyReleased="#setPastDueInfo" onMouseClicked="#setPastDueInfo">
+                      <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                      </GridPane.margin>
+                    </ListView>
+                    <GridPane GridPane.columnIndex="1">
+                      <children>
+                        <GridPane GridPane.columnIndex="1">
+                          <children>
+                            <Label text="Barcode ID:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x11" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Manufacturer:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Name:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Date Checked Out:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Job Number:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Comments:" GridPane.halignment="RIGHT" GridPane.rowIndex="9" GridPane.valignment="TOP">
+                              <GridPane.margin>
+                                <Insets right="10.0" top="5.0" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label fx:id="pastDueCurrID" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets left="10.0" fx:id="x211" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label fx:id="pastDueCurrManu" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets left="10.0" fx:id="x211" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label fx:id="pastDueCurrName" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets left="10.0" fx:id="x211" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label fx:id="pastDueCurrDate" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets left="10.0" fx:id="x211" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label fx:id="pastDueCurrNum" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets left="10.0" fx:id="x211" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Department:" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Checked Out To:" GridPane.halignment="RIGHT">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label fx:id="pastDueCurrUser" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets left="10.0" fx:id="x2" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label fx:id="pastDueCurrDept" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets left="10.0" fx:id="x2" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label text="Activity:" GridPane.halignment="RIGHT" GridPane.rowIndex="8">
+                              <GridPane.margin>
+                                <Insets right="10.0" fx:id="x1" />
+                              </GridPane.margin>
+                            </Label>
+                            <Label fx:id="pastDueCurrAct" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+                              <GridPane.margin>
+                                <Insets left="10.0" fx:id="x2" />
+                              </GridPane.margin>
+                            </Label>
+                            <TextArea fx:id="pastDueCurrComments" editable="false" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.margin="$x3" GridPane.rowIndex="9" />
+                                          <Label text="Estimated Return Date:" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="pastDueRetDate" text=" " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                          </children>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                          <GridPane.margin>
+                            <Insets top="10.0" />
+                          </GridPane.margin>
+                        </GridPane>
+                      </children>
+                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="539.3770751953125" minWidth="10.0" prefWidth="480.5601806640625" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                        <RowConstraints maxHeight="272.0" minHeight="10.0" prefHeight="262.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="248.73727416992188" minHeight="0.0" prefHeight="220.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                    </GridPane>
+                  </children>
+                  <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="660.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="559.80224609375" minWidth="10.0" prefWidth="300.2952880859375" />
+                  </columnConstraints>
+                  <rowConstraints>
+                    <RowConstraints maxHeight="497.0" minHeight="10.0" prefHeight="481.8758544921875" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="255.0" minHeight="10.0" prefHeight="173.1241455078125" vgrow="SOMETIMES" />
+                  </rowConstraints>
+                </GridPane>
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+            <Tab text="Job List">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <GridPane layoutX="1.0" layoutY="1.0" prefHeight="656.0" prefWidth="1150.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="304.33489990234375" minHeight="10.0" prefHeight="304.33489990234375" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="322.44879150390625" minHeight="10.0" prefHeight="310.4298095703125" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="199.89312744140625" minHeight="10.0" prefHeight="41.5701904296875" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <GridPane GridPane.rowIndex="2">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="85.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="600.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="578.4464111328125" minWidth="10.0" prefWidth="465.25482177734375" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label text="Equipment" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+                                       <GridPane.margin>
+                                          <Insets right="10.0" top="10.0" />
+                                       </GridPane.margin></Label>
+                                    <ListView fx:id="jobListItems" onKeyReleased="#selectItemJobList" onMouseClicked="#selectItemJobList" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+                                       <GridPane.margin>
+                                          <Insets right="10.0" />
+                                       </GridPane.margin>
+                                    </ListView>
+                                    <GridPane GridPane.columnIndex="2">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label text="Barcode ID:" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Manufacturer:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Equipment Name:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Checked Out On:" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Estimated Return Date:" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Current User:" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Comments:" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="TOP">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" top="3.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="jobListID" GridPane.columnIndex="1">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="jobListMan" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="jobListItemName" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="jobListCheckedOut" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="jobListRetDate" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="jobListUser" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <TextArea fx:id="jobListItemComments" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                             <GridPane.margin>
+                                                <Insets bottom="70.0" left="3.0" right="10.0" top="3.0" />
+                                             </GridPane.margin>
+                                          </TextArea>
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </GridPane>
+                              <GridPane>
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="600.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints maxHeight="144.5382080078125" minHeight="10.0" prefHeight="32.611358642578125" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="276.9849853515625" minHeight="10.0" prefHeight="271.3886413574219" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label text="Jobs" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                    <ListView fx:id="jobListJobs" onKeyReleased="#selectJobJobList" onMouseClicked="#selectJobJobList" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" />
+                                       </GridPane.margin>
+                                    </ListView>
+                                    <Label text="Job Information" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                    <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label text="Project Number:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Project Name:" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Dept:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Activity:" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Date Created:" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Location:" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Comments:" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="TOP">
+                                             <GridPane.margin>
+                                                <Insets right="10.0" top="3.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <TextArea fx:id="jobListComments" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                             <GridPane.margin>
+                                                <Insets bottom="30.0" left="3.0" right="10.0" top="3.0" />
+                                             </GridPane.margin>
+                                          </TextArea>
+                                          <Label fx:id="jobListName" text=" " GridPane.columnIndex="1">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="jobListNum" text=" " GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="jobListDept" text=" " GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="jobListAct" text=" " GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="jobListStartDate" text=" " GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="jobListLocale" text=" " GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                       </children>
+                                    </GridPane>
+                                    <Button fx:id="jobListRefresh" mnemonicParsing="false" onAction="#refreshJobList" text="Refresh" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                       <GridPane.margin>
+                                          <Insets right="20.0" top="5.0" />
+                                       </GridPane.margin>
+                                    </Button>
+                                 </children>
+                              </GridPane>
+                              <Label text="Equipment Information" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                 <GridPane.margin>
+                                    <Insets right="197.5" />
+                                 </GridPane.margin>
+                              </Label>
+                           </children>
+                        </GridPane>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Audit Trail">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <GridPane layoutX="1.0" prefHeight="659.0" prefWidth="1151.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                        </GridPane>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
       </tabs>
     </TabPane>
   </children>

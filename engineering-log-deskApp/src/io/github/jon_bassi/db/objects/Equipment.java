@@ -249,6 +249,7 @@ public class Equipment
                   isBeingCalibrated = false;
                   this.dbrefnum = 0;
                   this.currentuser = "admin";
+                  checkedout = new Timestamp(0);
                   break;
          case 1 : isBroken = true;
                   isBeingCalibrated = false;
@@ -351,6 +352,7 @@ public class Equipment
       this.estimatedreturn = toAdd.getReturnDate();
       this.currentuser = toAdd.getUsername();
       toAdd.getEquipment().add(this);
+      this.setCheckedout(new Timestamp(System.currentTimeMillis()));
    }
    
    /**
