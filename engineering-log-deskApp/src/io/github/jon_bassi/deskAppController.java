@@ -442,6 +442,7 @@ public class deskAppController implements Initializable
          pastDueCurrManu.setText("");
          pastDueCurrName.setText("");
          pastDueCurrDate.setText("");
+         pastDueRetDate.setText("");
          pastDueCurrNum.setText("");
          pastDueCurrAct.setText("");
          pastDueCurrDept.setText("");
@@ -462,6 +463,10 @@ public class deskAppController implements Initializable
       pastDueCurrManu.setText(currItem.getManufacturer());
       pastDueCurrName.setText(currItem.getName());
       pastDueCurrDate.setText(currItem.getCheckedout().toString());
+      if (currItem.getEstimatedreturn().getTime() <= 0)
+         pastDueRetDate.setText("none");
+      else
+         pastDueRetDate.setText(currItem.getEstimatedreturn().toString());
       Job currJob = new Job(Main.database.getJobInfo(currItem.getDbrefnum()));
       if (currJob.getDbrefnum() <= 10 && currJob.getDbrefnum() != 4)
       {
@@ -1318,7 +1323,7 @@ public class deskAppController implements Initializable
       {
          itemNames.add(e.getId() + " " + e.getManufacturer() + " " + e.getName());
       }
-      
+      jobListItems.getItems().clear();
       jobListItems.getItems().addAll(itemNames);
       
       Job job = new Job(Main.database.getJobInfo(dbrefnum));

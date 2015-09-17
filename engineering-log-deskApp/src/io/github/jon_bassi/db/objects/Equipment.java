@@ -352,6 +352,7 @@ public class Equipment
       this.estimatedreturn = toAdd.getReturnDate();
       this.currentuser = toAdd.getUsername();
       toAdd.getEquipment().add(this);
+      this.setCheckedout(new Timestamp(System.currentTimeMillis()));
    }
    
    /**

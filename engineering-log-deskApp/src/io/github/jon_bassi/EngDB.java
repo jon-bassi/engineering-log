@@ -824,10 +824,7 @@ public class EngDB
          stmt.setString(1, toEdit.getName());
          stmt.setString(2, toEdit.getManufacturer());
          stmt.setString(3, toEdit.getCurrentuser());
-         if (toEdit.getDbrefnum() != 0)
-            stmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
-         else
-            stmt.setTimestamp(4, toEdit.getCheckedout());
+         stmt.setTimestamp(4, toEdit.getCheckedout());
          stmt.setDate(5, toEdit.getEstimatedreturn());
          stmt.setString(6, toEdit.getComments());
          stmt.setLong(7, toEdit.getCalibrationinterval());
