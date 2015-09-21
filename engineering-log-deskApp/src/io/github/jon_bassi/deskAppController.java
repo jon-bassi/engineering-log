@@ -34,8 +34,7 @@ import javafx.stage.FileChooser;
  *        -add list to check out that displays items
  *        -one version has dropdown shows all users and new user button, everyone else doesn’t
  *        -logout doesnt work
- *        -add filter to audit trail/refresh button
- *        -add weight dimensions value to edit item
+ *        -barcode creation button
  * @author jon-bassi
  *
  */
@@ -732,7 +731,18 @@ public class deskAppController implements Initializable
     */
    public void createBarcode()
    {
-      
+      //TODO - display info on creating barcode and open IE to page where creation happens
+      if (!System.getProperty("os.name").contains("Windows"))
+         return;
+      String cmd = "\"C:\\Program Files\\Internet Explorer\\iexplore.exe\" http://www.morovia.com/free-online-barcode-generator/";
+      try
+      {
+         @SuppressWarnings("unused")
+         Process p = Runtime.getRuntime().exec(cmd);
+      } catch (IOException e)
+      {
+         ExceptionHandler.displayException(e);
+      }
    }
    
    /**
@@ -1467,15 +1477,6 @@ public class deskAppController implements Initializable
       jobListRetDate.setText(item.getEstimatedreturn().toString());
       jobListUser.setText(Main.database.getFullname(item.getCurrentuser()));
       jobListItemComments.setText(item.getComments());
-      
-   }
-   
-   //@ FXML
-   /**
-    * checks in all items on the selected job
-    */
-   public void checkInJob()
-   {
       
    }
    

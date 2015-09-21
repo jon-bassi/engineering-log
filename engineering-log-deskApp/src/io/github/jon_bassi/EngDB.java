@@ -1139,8 +1139,8 @@ public class EngDB
       try
       {
          String sql = "INSERT INTO equipment (id,dbrefnum,name,manufacturer,currentuser,"
-               + "checkedout,estimatedreturn,comments,calibrationinterval,nextcalibrationdate)"
-               + " VALUES (?,?,?,?,?,?,?,?,?,?)";
+               + "checkedout,estimatedreturn,comments,calibrationinterval,nextcalibrationdate"
+               + ",dimensions,weight,value) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
          
          PreparedStatement stmt = con.prepareStatement(sql);
          
@@ -1154,6 +1154,9 @@ public class EngDB
          stmt.setString(8, toCreate.getComments());
          stmt.setLong(9, toCreate.getCalibrationinterval());
          stmt.setDate(10, toCreate.getNextcalibrationdate());
+         stmt.setString(11, toCreate.getDimensions());
+         stmt.setString(12, toCreate.getWeight());
+         stmt.setFloat(13, toCreate.getValue());
          
          stmt.executeUpdate();
       } catch (SQLException e)

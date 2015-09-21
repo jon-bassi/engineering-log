@@ -44,7 +44,7 @@ public class Equipment
       calibrationinterval = 0;
       nextcalibrationdate = new Date (0);
       dimensions = "";
-      weight = "";
+      weight = "0";
       value = 0.0f;
    }
    
