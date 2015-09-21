@@ -712,6 +712,37 @@ public class EngDB
    }
    
    /**
+    * retrieves the list of audits from our audit trail
+    */
+   public ArrayList<String> getAudits()
+   {
+      try
+      {
+         String sql = "SELECT * FROM englog ORDER BY datetime DESC";
+         
+         ResultSet rs = runSql(sql);
+         
+         ArrayList<String> results = new ArrayList<>();
+         while (rs.next())
+         {
+            Job j = new Job(getJobInfo(rs.getInt(2)));
+            results.add(rs.getString(8) + ": " + rs.getString(3) + " " + rs.getString(5)
+                  + " from " + rs.getString(6) + " to " + rs.getString(7) + " for "
+                  + j.getProjname());
+         }
+         return results;
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      
+      return null;
+   }
+   
+   /**
     * sets the item's job to 0 and user to admin
     * @param id
     */
@@ -819,7 +850,8 @@ public class EngDB
          String sql = "UPDATE equipment SET dbrefnum = '"  + toEdit.getDbrefnum() + "'"
                + ", name = (?), manufacturer = (?), currentuser = (?), checkedout = (?)"
                + ", estimatedreturn = (?), comments = (?), calibrationinterval = (?)"
-               + ", nextcalibrationdate = (?) WHERE id = '" + toEdit.getId() + "'";
+               + ", nextcalibrationdate = (?), dimensions = (?), weight = (?)"
+               + ", value = (?) WHERE id = '" + toEdit.getId() + "'";
          
          PreparedStatement stmt = con.prepareStatement(sql);
          
@@ -834,6 +866,9 @@ public class EngDB
             stmt.setDate(8, new Date(0L));
          else
             stmt.setDate(8, toEdit.getNextcalibrationdate());
+         stmt.setString(9, toEdit.getDimensions());
+         stmt.setString(10,toEdit.getWeight());
+         stmt.setFloat(11, toEdit.getValue());
          
          stmt.executeUpdate();
       } catch (SQLException e)

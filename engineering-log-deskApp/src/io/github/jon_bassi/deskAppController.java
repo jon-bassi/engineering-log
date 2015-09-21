@@ -6,7 +6,10 @@ import io.github.jon_bassi.view.ExceptionHandler;
 import io.github.jon_bassi.view.ScanningHandler;
 import io.github.jon_bassi.view.WindowHandler;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -19,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
 
 /**
  * TODO : -prepare for job type selection (items are a part of a type, types need a certain
@@ -27,19 +31,11 @@ import javafx.scene.control.TextField;
  *        -look at Check Out Item method for correct algorithm
  *        -add check in job (checks in all items in a job??)
  *        -strings file??
- *        -less text in boxes
- *        -show calibration date on front page
- *        -arrow keys don’t do anything on lists
- *        -new page for calibrations
- *        -add list to check out that displays items 
- *        -select all text in scan button, auto populate from with checked in items
- *        -current jobs tab - list of jobs, click on one,
- *         lists all items checked out to it in a different list, fields for job info and item info
- *        -manufacturer in lists
- *        -less words in popups more buttons
+ *        -add list to check out that displays items
  *        -one version has dropdown shows all users and new user button, everyone else doesn’t
- *        -calibrations to admin?
- *        -add out for calibration list with option to check back in
+ *        -logout doesnt work
+ *        -add filter to audit trail/refresh button
+ *        -add weight dimensions value to edit item
  * @author jon-bassi
  *
  */
@@ -67,6 +63,8 @@ public class deskAppController implements Initializable
    private ListView<String> jobListJobs;
    @ FXML
    private ListView<String> jobListItems;
+   @ FXML
+   private ListView<String> auditTrail;
    
    // Home tab
    @ FXML
@@ -203,6 +201,7 @@ public class deskAppController implements Initializable
       updateCheckedOut();
       updateCheckedIn();
       
+      
       refreshJobList();
       
       // new thread for loading things not on the front page - won't stall the program on load
@@ -216,7 +215,7 @@ public class deskAppController implements Initializable
             updateCalibrations();
             //updateCheckedOutAll();
             updatePastDue();
-            
+            refreshAuditTrail();
             
             lastUpdate = System.currentTimeMillis();
             
@@ -723,6 +722,15 @@ public class deskAppController implements Initializable
             , "The seleced job's information was updated.");
    }
    
+   @ FXML
+   /**
+    * opens barcode creation page in ie
+    */
+   public void createBarcode()
+   {
+      
+   }
+   
    /**
     * displays the app info
     */
@@ -903,7 +911,6 @@ public class deskAppController implements Initializable
    @ FXML
    /**
     * checks out the selected item on the front page
-    * TODO : messages for items in preset jobs (1,2,3,4)
     */
    public void checkOutSelected()
    {
@@ -992,7 +999,7 @@ public class deskAppController implements Initializable
    }
    
    /**
-    * TODO : get rid of big messages
+    * Checks out a single item
     * @param id
     */
    private void checkOutItem(String id)
@@ -1202,8 +1209,7 @@ public class deskAppController implements Initializable
                + " in your job, they will be discarded.",s);
          WindowHandler.displayAlert("Invalid Scans", "Some of your scans are invalid..."
                , "One or more of the items scanned is currently broken, or in need of"
-               + " calibration. If this is not the case, please scan these items in"
-               + " seperately and read the directions on the messages displayed.");
+               + " calibration. Please scan these seperately.");
       }
       
       if (scans.size() < 1)
@@ -1345,6 +1351,54 @@ public class deskAppController implements Initializable
    
    @ FXML
    /**
+    * exports job info to CSV along with equipment in job
+    */
+   public void exportJob()
+   {
+      FileChooser chooser = new FileChooser();
+      FileChooser.ExtensionFilter ext = new FileChooser.ExtensionFilter("CSV", "*.csv");
+      chooser.getExtensionFilters().add(ext);
+      File file = chooser.showSaveDialog(null);
+      if (file == null)
+      {
+         WindowHandler.displayAlert("Failure", "File was not saved", "The data was not exported"
+               + " please try again");
+         return;
+      }
+      if (!file.getName().endsWith(".csv"))
+      {
+         file = new File(file.getAbsolutePath() + ".csv");
+      }
+      
+      try
+      {
+         
+         
+         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+         
+         writer.write(jobListNum.getText() + " " + jobListName.getText() +"\nDepartment:," + jobListDept.getText()
+               + "\nActivity:," + jobListAct.getText() + "\nDestination:," + jobListLocale.getText()
+               + "\nEquipment\n");
+         ArrayList<Equipment> equipment = Main.database.getItemsForJob(Main.database.getJobDBrefnum(jobListNum.getText()));
+         for (Equipment e : equipment)
+         {
+            writer.write(e.getId() + "," + e.getManufacturer() + "," + e.getName() + ","
+                  + e.getDimensions() + "," + e.getWeight() + "lb,$" + String.format("%.2f", e.getValue()) + "\n");
+         }
+         
+         writer.close();
+         
+      } catch (IOException e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      
+      WindowHandler.displayAlert("Confirmation", "Success"
+            , "The job information was exported successfully.");
+   }
+   
+   @ FXML
+   /**
     * triggers when selecting a job in the jobList tab
     */
    public void selectJobJobList()
@@ -1380,6 +1434,8 @@ public class deskAppController implements Initializable
       jobListLocale.setText(job.getLocation());
       jobListComments.setText(job.getComments());
       
+      jobListItems.getSelectionModel().select(0);
+      selectItemJobList();
    }
    
    @FXML
@@ -1410,6 +1466,26 @@ public class deskAppController implements Initializable
       
    }
    
+   //@ FXML
+   /**
+    * checks in all items on the selected job
+    */
+   public void checkInJob()
+   {
+      
+   }
+   
+   @ FXML
+   /**
+    * refreshes and displays information on recent events within the database
+    */
+   public void refreshAuditTrail()
+   {
+      ArrayList<String> audits = Main.database.getAudits();
+      
+      auditTrail.getItems().clear();
+      auditTrail.getItems().addAll(audits);
+   }
    
    /**
     * updates the list of checked out items and selects the first item if possible
