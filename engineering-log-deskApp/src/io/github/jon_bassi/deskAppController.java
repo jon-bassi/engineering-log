@@ -190,6 +190,10 @@ public class deskAppController implements Initializable
    @ FXML
    private TextArea jobListItemComments;
    
+   // Audit Trail tab
+   @ FXML
+   private TextField auditTrailFilterText;
+   
    @ Override
    /**
     * sets up GUI home page when opened, first method called, ignore args
@@ -201,21 +205,21 @@ public class deskAppController implements Initializable
       updateCheckedOut();
       updateCheckedIn();
       
-      
       refreshJobList();
+      
+      refreshAuditTrail();
       
       // new thread for loading things not on the front page - won't stall the program on load
       // also include checks and updates here, updates can be tested once a week with current/next
       // update time stored in another database table
       runnable = new Runnable(){
          @Override
-         public void run()
+         public void run() throws IllegalStateException
          {
             // update other pages
             updateCalibrations();
             //updateCheckedOutAll();
             updatePastDue();
-            refreshAuditTrail();
             
             lastUpdate = System.currentTimeMillis();
             
@@ -753,7 +757,7 @@ public class deskAppController implements Initializable
       
       String filterText = filterField.getText();
       
-      ArrayList<String> filteredItems = Main.database.getFilteredCheckdIn(filterText);
+      ArrayList<String> filteredItems = Main.database.getFilteredCheckedIn(filterText);
       
       checkedInList.getItems().clear();
       checkedInList.getItems().addAll(filteredItems);
@@ -1476,15 +1480,32 @@ public class deskAppController implements Initializable
    }
    
    @ FXML
+   public void filterAuditTrail()
+   {
+      auditTrail.getItems().clear();
+      auditTrail.getItems().add("Loading...");
+      
+      ArrayList<String> audits = Main.database.getFilteredAudits(auditTrailFilterText.getText());
+      
+      auditTrail.getItems().clear();
+      auditTrail.getItems().addAll(audits);
+   }
+   
+   
+   @ FXML
    /**
     * refreshes and displays information on recent events within the database
     */
    public void refreshAuditTrail()
    {
+      auditTrail.getItems().clear();
+      auditTrail.getItems().add("Loading...");
+      
       ArrayList<String> audits = Main.database.getAudits();
       
       auditTrail.getItems().clear();
-      auditTrail.getItems().addAll(audits);
+      for (String s : audits)
+         auditTrail.getItems().add(s);
    }
    
    /**

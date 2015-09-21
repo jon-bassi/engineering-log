@@ -3,6 +3,7 @@ package io.github.jon_bassi;
 import io.github.jon_bassi.db.objects.Equipment;
 import io.github.jon_bassi.db.objects.Job;
 import io.github.jon_bassi.view.ExceptionHandler;
+import io.github.jon_bassi.view.WindowHandler;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -53,13 +54,16 @@ public class EngDB
          
       } catch (SQLException e)
       {
-         e.printStackTrace();
+         WindowHandler.displayAlert("Error", "Could not connect", "Check your internet connection"
+               + " and try again.");
       } catch (ClassNotFoundException e)
       {
-         e.printStackTrace();
+         WindowHandler.displayAlert("Error", "Could not connect", "Check your internet connection"
+               + " and try again.");
       } catch (IOException e)
       {
-         e.printStackTrace();
+         WindowHandler.displayAlert("Error", "Could not connect", "Check your internet connection"
+               + " and try again.");
       }
    }
    
@@ -380,7 +384,7 @@ public class EngDB
    }
    
    
-   public ArrayList<String> getFilteredCheckdIn(String filterText)
+   public ArrayList<String> getFilteredCheckedIn(String filterText)
    {
       try
       {
@@ -719,6 +723,38 @@ public class EngDB
       try
       {
          String sql = "SELECT * FROM englog ORDER BY datetime DESC";
+         
+         ResultSet rs = runSql(sql);
+         
+         ArrayList<String> results = new ArrayList<>();
+         while (rs.next())
+         {
+            Job j = new Job(getJobInfo(rs.getInt(2)));
+            results.add(rs.getString(8) + ": " + rs.getString(3) + " " + rs.getString(5)
+                  + " from " + rs.getString(6) + " to " + rs.getString(7) + " for "
+                  + j.getProjname());
+         }
+         return results;
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      
+      return null;
+   }
+   
+   
+   public ArrayList<String> getFilteredAudits(String filter)
+   {
+      try
+      {
+         String sql = "SELECT * FROM englog WHERE equipmentid LIKE"
+               + " '%" + filter + "%' OR projname LIKE '%" + filter + "%' OR equipmentname"
+               + " LIKE '%" + filter + "%' OR userfrom LIKE '%" + filter + "%' OR"
+               + " userto LIKE '%" + filter + "%' ORDER BY datetime DESC";
          
          ResultSet rs = runSql(sql);
          

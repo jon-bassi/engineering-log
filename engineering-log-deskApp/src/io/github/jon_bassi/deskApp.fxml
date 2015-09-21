@@ -45,12 +45,12 @@
                   <children>
                     <Label alignment="CENTER" contentDisplay="CENTER" text="Your checked out items" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
                       <GridPane.margin>
-                        <Insets bottom="10.0" fx:id="x4" />
+                        <Insets bottom="5.0" fx:id="x4" />
                       </GridPane.margin>
                     </Label>
                     <ListView fx:id="checkedOutList" onKeyReleased="#viewCurrInfo" onMouseClicked="#viewCurrInfo" prefHeight="213.0" prefWidth="657.0" GridPane.rowIndex="1">
                                  <GridPane.margin>
-                                    <Insets bottom="30.0" left="10.0" />
+                                    <Insets left="10.0" />
                                  </GridPane.margin></ListView>
                     <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
                       <children>
@@ -156,27 +156,9 @@
                             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                           <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0" vgrow="SOMETIMES" />
+                            <RowConstraints vgrow="SOMETIMES" />
                           </rowConstraints>
                         </GridPane>
-                                    <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                      <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                      </columnConstraints>
-                                      <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      </rowConstraints>
-                                       <children>
-                                          <Button mnemonicParsing="false" onAction="#editSelected" text="Edit Selected" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                              <Button mnemonicParsing="false" onAction="#checkInSelected" text="Check In Selected" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                                <GridPane.margin>
-                                  <Insets fx:id="x1" />
-                                </GridPane.margin>
-                              </Button>
-                                       </children>
-                                    </GridPane>
                       </children>
                       <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
@@ -185,7 +167,6 @@
                       </columnConstraints>
                       <rowConstraints>
                         <RowConstraints maxHeight="272.0" minHeight="10.0" prefHeight="224.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="30.0" minHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       </rowConstraints>
                     </GridPane>
                     <Label text="More information" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.margin="$x4" GridPane.valignment="BOTTOM" />
@@ -196,7 +177,7 @@
                     </ListView>
                     <Label text="Checked In Items" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                       <GridPane.margin>
-                        <Insets bottom="10.0" fx:id="x4" />
+                        <Insets bottom="5.0" fx:id="x4" />
                       </GridPane.margin>
                     </Label>
                     <GridPane GridPane.columnIndex="1" GridPane.rowIndex="3">
@@ -265,6 +246,27 @@
                                     </Button>
                                  </children>
                               </GridPane>
+                              <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                        <Button mnemonicParsing="false" onAction="#checkInSelected" text="Check In Selected" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                          <GridPane.margin>
+                            <Insets top="10.0" fx:id="x1" />
+                          </GridPane.margin>
+                        </Button>
+                                    <Button mnemonicParsing="false" onAction="#editSelected" text="Edit Selected" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                       <GridPane.margin>
+                                          <Insets top="10.0" />
+                                       </GridPane.margin>
+                                    </Button>
+                                 </children>
+                              </GridPane>
                   </children>
                   <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -274,10 +276,10 @@
                     <Insets bottom="10.0" left="10.0" right="10.0" />
                   </padding>
                   <rowConstraints>
-                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="441.0" minHeight="10.0" prefHeight="287.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="215.0" minHeight="0.0" prefHeight="7.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="429.0" minHeight="8.0" prefHeight="270.6690979003906" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="441.0" minHeight="10.0" prefHeight="259.09149169921875" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="429.0" minHeight="8.0" prefHeight="263.1094970703125" vgrow="SOMETIMES" />
                     <RowConstraints maxHeight="449.0" minHeight="10.0" prefHeight="39.807373046875" vgrow="SOMETIMES" />
                   </rowConstraints>
                 </GridPane>
@@ -1020,14 +1022,14 @@
                                           </Label>
                                           <Button mnemonicParsing="false" onAction="#exportJob" text="Export to CSV" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                                              <GridPane.margin>
-                                                <Insets right="20.0" />
+                                                <Insets right="10.0" />
                                              </GridPane.margin>
                                           </Button>
                                        </children>
                                     </GridPane>
                                     <Button fx:id="jobListRefresh" mnemonicParsing="false" onAction="#refreshJobList" text="Refresh" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
                                        <GridPane.margin>
-                                          <Insets right="20.0" top="5.0" />
+                                          <Insets right="10.0" />
                                        </GridPane.margin>
                                     </Button>
                                  </children>
@@ -1051,9 +1053,9 @@
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
                           </columnConstraints>
                           <rowConstraints>
-                            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="45.0" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="580.0" minHeight="10.0" prefHeight="568.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="61.0" minHeight="-Infinity" prefHeight="61.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="45.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <ListView fx:id="auditTrail" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
@@ -1070,12 +1072,12 @@
                                   <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="45.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <TextField GridPane.halignment="LEFT" GridPane.valignment="TOP">
+                                    <TextField fx:id="auditTrailFilterText" onAction="#filterAuditTrail" GridPane.halignment="LEFT" GridPane.valignment="TOP">
                                        <GridPane.margin>
                                           <Insets left="10.0" top="10.0" />
                                        </GridPane.margin>
                                     </TextField>
-                                    <Button mnemonicParsing="false" text="Flilter" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+                                    <Button mnemonicParsing="false" onAction="#filterAuditTrail" text="Flilter" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
                                        <GridPane.margin>
                                           <Insets left="10.0" top="10.0" />
                                        </GridPane.margin>
@@ -1087,6 +1089,11 @@
                                     <Insets bottom="5.0" />
                                  </GridPane.margin>
                               </Label>
+                              <Button mnemonicParsing="false" onAction="#refreshAuditTrail" text="Refresh" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </Button>
                            </children>
                         </GridPane>
                      </children></AnchorPane>
