@@ -26,7 +26,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 
 /**
- * TODO : -one version has dropdown shows all users and new user button, everyone else doesn’t
+ * Lite version of the ENGDB DeskApp, removed specific functionality so that regular users
+ * don't have access to certain methods and tabs.
+ * 
  * @author jon-bassi
  *
  */
