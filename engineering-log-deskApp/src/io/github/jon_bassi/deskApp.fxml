@@ -25,7 +25,7 @@
             <MenuItem mnemonicParsing="false" onAction="#editJob" text="Edit Job" />
             <MenuItem mnemonicParsing="false" onAction="#editItem" text="Edit Item" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="createBarcode" mnemonicParsing="false" text="Create Barcode" />
+                  <MenuItem mnemonicParsing="false" onAction="#createBarcode" text="Create Barcode" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">

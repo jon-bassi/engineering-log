@@ -8,6 +8,7 @@ import io.github.jon_bassi.view.WindowHandler;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
@@ -27,14 +28,11 @@ import javafx.stage.FileChooser;
 /**
  * TODO : -prepare for job type selection (items are a part of a type, types need a certain
  *         amount of items
- *        -make sure items which are broken are attributed to admin???
  *        -look at Check Out Item method for correct algorithm
  *        -add check in job (checks in all items in a job??)
  *        -strings file??
  *        -add list to check out that displays items
  *        -one version has dropdown shows all users and new user button, everyone else doesn’t
- *        -logout doesnt work
- *        -barcode creation button
  * @author jon-bassi
  *
  */
@@ -573,10 +571,10 @@ public class deskAppController implements Initializable
       {
          Main.database.disconnect();
          Scanner file = new Scanner(new File("paths.dat"));
-         String command = file.nextLine();
+         String cmd = file.nextLine();
          file.close();
          @SuppressWarnings("unused")
-         Process p = Runtime.getRuntime().exec(command);
+         Process p = Runtime.getRuntime().exec(cmd);
          System.exit(0);
       } catch (Exception e)
       {
@@ -731,14 +729,37 @@ public class deskAppController implements Initializable
     */
    public void createBarcode()
    {
-      //TODO - display info on creating barcode and open IE to page where creation happens
-      if (!System.getProperty("os.name").contains("Windows"))
+      String[] options = {"Ok"};
+      int result = WindowHandler.displayConfirmDialog("Please read these instructions"
+            + " before you continue.\n1. The barcode should be made up of a combination of an acronym"
+            + " of the manufacturer name and equiment name, followed by the S/N of the equipment.\n"
+            + "2. The Barcode shall not be greater than 11 characters.\n3. The barcode shall"
+            + " only contain alpha-numeric characters (0-9,aA-zZ).\n4. If the equipment does"
+            + " not have a S/N use an acronym for the manufacturer+name followed by 0001, incrementing"
+            + " the number for each item of that type.\n5. The barcode shall be of the"
+            + " format: \"Code 128\" X-dimension: \"2\" and contain human readable text.\n\n"
+            + "Place the barcode into the excel spreadsheet labeled barcodes and format so that"
+            + " they fit onto the barcode Avery Template 5160 labels.", 1, options);
+      if (result == 0)
+      {
          return;
-      String cmd = "\"C:\\Program Files\\Internet Explorer\\iexplore.exe\" http://www.morovia.com/free-online-barcode-generator/";
+      }
       try
       {
+         Scanner file = new Scanner(new File("paths.dat"));
+         file.nextLine();
+         String cmd = file.nextLine();
+         file.close();
+         
+         if (!System.getProperty("os.name").contains("Windows"))
+         {
+            return;
+         }
          @SuppressWarnings("unused")
          Process p = Runtime.getRuntime().exec(cmd);
+      } catch (FileNotFoundException e)
+      {
+         ExceptionHandler.displayException(e);
       } catch (IOException e)
       {
          ExceptionHandler.displayException(e);
