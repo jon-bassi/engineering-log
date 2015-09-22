@@ -7,6 +7,7 @@ import io.github.jon_bassi.db.objects.Job;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import javafx.application.Platform;
@@ -37,7 +38,7 @@ public class WindowHandler
     * main login panel
     * @return {user choice as String, user name as String}
     */
-   public static String[] displayLoginPane()
+   public static String[] displayLoginPane(ArrayList<String> users)
    {
       Alert alert = new Alert(AlertType.NONE);
       alert.setTitle("Login");
@@ -48,12 +49,16 @@ public class WindowHandler
       grid.setVgap(10);
       grid.setPadding(new Insets(20, 150, 10, 10));
 
-      TextField username = new TextField();
-      username.setPromptText("Username:");
+      ComboBox<String> username = new ComboBox<>();
+      username.getItems().addAll(users);
       
       if (System.getProperty("os.name").contains("Windows"))
-         username.setText(System.getProperty("user.name"));
-      
+      {
+         if (username.getItems().contains(System.getProperty("user.name")))
+         {
+            username.getSelectionModel().select((System.getProperty("user.name")));
+         }
+      }
       grid.add(new Label("Username:"), 0, 0);
       grid.add(username, 1, 0);
       
@@ -62,22 +67,15 @@ public class WindowHandler
       Platform.runLater(() -> username.requestFocus());
       
       ButtonType login = new ButtonType("Login",ButtonData.OK_DONE);
-      ButtonType create = new ButtonType("New User");
       ButtonType cancel = new ButtonType("Cancel",ButtonData.CANCEL_CLOSE);
       
-      alert.getButtonTypes().setAll(login,create,cancel);
+      alert.getButtonTypes().setAll(login,cancel);
       Optional<ButtonType> result = alert.showAndWait();
       
       // login pressed
       if (result.get() == login)
       {
-         String[] toRet = {"0",username.getText()};
-         return toRet;
-      }
-      // new user pressed
-      if (result.get() == create)
-      {
-         String[] toRet = {"1",username.getText()};
+         String[] toRet = {"0",username.getSelectionModel().getSelectedItem()};
          return toRet;
       }
       // cancel pressed or frame closed

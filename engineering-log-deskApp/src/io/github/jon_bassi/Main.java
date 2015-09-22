@@ -52,40 +52,16 @@ public class Main extends Application
       database = new EngDB();
       
       // login logic & debug catch - use command line instead of code input
-      if (!DEBUG)
-      {
-         showLogin();
-      }
-      else
-         user = "admin";
-      
       // check user against user table
       // pull up list of users - note, later grab the full name as well so it can be placed into GUI
       ArrayList<String> users = database.getAllUsers();
-      // if not present ask if they would like to create a new username or re-input their name
-      // else continue to GUI
-      
-      if (!users.contains(user))
+      if (!DEBUG)
       {
-         String[] options = {"Create New User","Re-input Username"};
-         switch(WindowHandler.displayConfirmDialog(user + " is not a recognized username. Please choose and option:",2,options))
-         {
-         // create new user - with some check system - include email here as well - check for duplicates?- will just throw error
-         case 1 :
-            createNewUser();
-            break;
-            
-         // re-input
-         case 2 :
-            do
-            {
-               showLogin();
-            } while(!users.contains(user));
-            break;
-            
-         // default case
-         default : System.exit(0);
-         }
+         showLogin(users);
+      }
+      else
+      {
+         user = "admin";
       }
       
       // load main GUI
@@ -113,50 +89,17 @@ public class Main extends Application
       
    }
    
-   private void showLogin() throws SQLException
+   private void showLogin(ArrayList<String> users) throws SQLException
    {
-      String[] result = WindowHandler.displayLoginPane();
+      String[] result = WindowHandler.displayLoginPane(users);
       int res = Integer.parseInt(result[0]);
       user = result[1].toLowerCase();
       
-      if (res == 1)
+      if (user == null || user.equals("") || res == 2)
       {
-         user = createNewUser();
-      }
-      else if (user == null || user.equals("") || res == 2)
          System.exit(0);
-      
+      }
       
       return;
    }
-   
-   /**
-    * calls panels to input user information and submits it to the database
-    * @throws SQLException
-    */
-   private String createNewUser() throws SQLException
-   {
-      // creation of user
-      String[] result;
-      int res = 0;
-      
-      do
-      {
-         result = WindowHandler.displayNewUserPane();
-         res = Integer.parseInt(result[0]);
-         
-         if (res != 1 || result[1] == null || result[1].equals(""))
-            System.exit(0);
-         
-         res = WindowHandler.displayConfirmUserPane(result);
-         
-         if ((res != 1 && res != 2) || result[1] == null || result[1].equals(""))
-            System.exit(0);
-      } while (res != 1);
-      
-      System.out.println("new user created");
-      database.insertNewUser(result[1].toLowerCase(), result[2], result[3]);
-      return result[1].toLowerCase();
-   }
-   
 }

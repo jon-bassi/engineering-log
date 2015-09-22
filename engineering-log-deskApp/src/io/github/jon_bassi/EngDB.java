@@ -716,69 +716,6 @@ public class EngDB
    }
    
    /**
-    * retrieves the list of audits from our audit trail
-    */
-   public ArrayList<String> getAudits()
-   {
-      try
-      {
-         String sql = "SELECT * FROM englog ORDER BY datetime DESC";
-         
-         ResultSet rs = runSql(sql);
-         
-         ArrayList<String> results = new ArrayList<>();
-         while (rs.next())
-         {
-            Job j = new Job(getJobInfo(rs.getInt(2)));
-            results.add(rs.getString(8) + ": " + rs.getString(3) + " " + rs.getString(5)
-                  + " from " + rs.getString(6) + " to " + rs.getString(7) + " for "
-                  + j.getProjname());
-         }
-         return results;
-      } catch (SQLException e)
-      {
-         ExceptionHandler.displayException(e);
-      } catch (Exception e)
-      {
-         ExceptionHandler.displayException(e);
-      }
-      
-      return null;
-   }
-   
-   
-   public ArrayList<String> getFilteredAudits(String filter)
-   {
-      try
-      {
-         String sql = "SELECT * FROM englog WHERE equipmentid LIKE"
-               + " '%" + filter + "%' OR projname LIKE '%" + filter + "%' OR equipmentname"
-               + " LIKE '%" + filter + "%' OR userfrom LIKE '%" + filter + "%' OR"
-               + " userto LIKE '%" + filter + "%' ORDER BY datetime DESC";
-         
-         ResultSet rs = runSql(sql);
-         
-         ArrayList<String> results = new ArrayList<>();
-         while (rs.next())
-         {
-            Job j = new Job(getJobInfo(rs.getInt(2)));
-            results.add(rs.getString(8) + ": " + rs.getString(3) + " " + rs.getString(5)
-                  + " from " + rs.getString(6) + " to " + rs.getString(7) + " for "
-                  + j.getProjname());
-         }
-         return results;
-      } catch (SQLException e)
-      {
-         ExceptionHandler.displayException(e);
-      } catch (Exception e)
-      {
-         ExceptionHandler.displayException(e);
-      }
-      
-      return null;
-   }
-   
-   /**
     * sets the item's job to 0 and user to admin
     * @param id
     */
@@ -1060,33 +997,6 @@ public class EngDB
       }
       
       return dbrefnum;
-   }
-   
-   /**
-    * inserts a new user into the user table in the database
-    * @param username the person's username (hopefully HDR name, will shorten to 8 char)
-    * @param fullname the person's full name (first last, so we know who to blame)
-    */
-   public void insertNewUser(String username, String fullname, String email)
-   {
-      try
-      {
-         PreparedStatement stmt = con.prepareStatement("INSERT INTO users (username,fullname,email) VALUES (?,?,?)");
-         
-         if (username.length() > 8)
-            username = username.substring(0, 8);
-         
-         stmt.setString(1, username);
-         stmt.setString(2,fullname);
-         stmt.setString(3,email);
-         stmt.executeUpdate();
-      } catch (SQLException e)
-      {
-         ExceptionHandler.displayException(e);
-      } catch (Exception e)
-      {
-         ExceptionHandler.displayException(e);
-      }
    }
    
    /**

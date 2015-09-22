@@ -26,13 +26,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 
 /**
- * TODO : -prepare for job type selection (items are a part of a type, types need a certain
- *         amount of items
- *        -look at Check Out Item method for correct algorithm
- *        -add check in job (checks in all items in a job??)
- *        -strings file??
- *        -add list to check out that displays items
- *        -one version has dropdown shows all users and new user button, everyone else doesn’t
+ * TODO : -one version has dropdown shows all users and new user button, everyone else doesn’t
  * @author jon-bassi
  *
  */
@@ -47,10 +41,6 @@ public class deskAppController implements Initializable
    @ FXML
    private ListView<String> checkedInList;
    @ FXML
-   private ListView<String> calibrationList;
-   @ FXML
-   private ListView<String> calibrationOutList;
-   @ FXML
    private ListView<String> checkedOutAll;
    @ FXML
    private ListView<String> pastDueAll;
@@ -60,8 +50,6 @@ public class deskAppController implements Initializable
    private ListView<String> jobListJobs;
    @ FXML
    private ListView<String> jobListItems;
-   @ FXML
-   private ListView<String> auditTrail;
    
    // Home tab
    @ FXML
@@ -88,30 +76,6 @@ public class deskAppController implements Initializable
    private Label currNextCal;
    @ FXML
    private TextArea currComments;
-   
-   // Calibration tab
-   @ FXML
-   private Label calCurrUser;
-   @ FXML
-   private Label calCurrID;
-   @ FXML
-   private Label calCurrManu;
-   @ FXML
-   private Label calCurrName;
-   @ FXML
-   private Label calCurrDate;
-   @ FXML
-   private Label calRetDate;
-   @ FXML
-   private Label calCurrNum;
-   @ FXML
-   private Label calCurrDept;
-   @ FXML
-   private Label calCurrAct;
-   @ FXML
-   private Label calNextCal;
-   @ FXML
-   private TextArea calComments;
    
    // Past Due tab
    @ FXML
@@ -187,10 +151,6 @@ public class deskAppController implements Initializable
    @ FXML
    private TextArea jobListItemComments;
    
-   // Audit Trail tab
-   @ FXML
-   private TextField auditTrailFilterText;
-   
    @ Override
    /**
     * sets up GUI home page when opened, first method called, ignore args
@@ -204,8 +164,6 @@ public class deskAppController implements Initializable
       
       refreshJobList();
       
-      refreshAuditTrail();
-      
       // new thread for loading things not on the front page - won't stall the program on load
       // also include checks and updates here, updates can be tested once a week with current/next
       // update time stored in another database table
@@ -213,8 +171,6 @@ public class deskAppController implements Initializable
          @Override
          public void run() throws IllegalStateException
          {
-            // update other pages
-            updateCalibrations();
             //updateCheckedOutAll();
             updatePastDue();
             
@@ -358,85 +314,6 @@ public class deskAppController implements Initializable
          searchResults.getItems().add(s);
       searchResults.getSelectionModel().select(1);
       setSearchedInfo();
-   }
-   
-   @ FXML
-   /**
-    * sets the info for the selected items on the checked out (all) page
-    */
-   public void setCalibrationInfo()
-   {
-      Main.database.reconnect();
-      lastUpdate = System.currentTimeMillis();
-      
-      int list = 1;
-      
-      ArrayList<ListView<String>> lists = new ArrayList<>();
-      lists.add(calibrationList);
-      lists.add(calibrationOutList);
-      
-      // check which frame is selected
-      if (calibrationList.isFocused())
-         list = 0;
-      
-      String selected = lists.get(list).getSelectionModel().getSelectedItem();
-      if (selected == null || selected.equals(""))
-      {
-         calCurrUser.setText("");
-         calCurrID.setText("");
-         calCurrManu.setText("");
-         calCurrName.setText("");
-         calCurrDate.setText("");
-         calRetDate.setText("");
-         calCurrNum.setText("");
-         calCurrAct.setText("");
-         calCurrDept.setText("");
-         calNextCal.setText("");
-         calComments.setText("");
-         return;
-      }
-      
-      int idx = selected.indexOf(' ');
-      String id = selected.substring(0, idx);
-      selected = selected.substring(idx+1,selected.length());
-      idx = selected.indexOf(' ');
-      selected = selected.substring(idx+1,selected.length());
-      
-      Equipment currItem = new Equipment(Main.database.getItemInfo(id));
-      
-      calCurrUser.setText(Main.database.getFullname(currItem.getCurrentuser()));
-      calCurrID.setText(currItem.getId());
-      calCurrManu.setText(currItem.getManufacturer());
-      calCurrName.setText(currItem.getName());
-      if (currItem.getCheckedout().getTime() <= 0)
-         calCurrDate.setText("Checked In");
-      else
-         calCurrDate.setText(currItem.getCheckedout().toString());
-      if (currItem.getEstimatedreturn().getTime() <= 0)
-         calRetDate.setText("none");
-      else
-         calRetDate.setText(currItem.getEstimatedreturn().toString());
-      Job currJob = new Job(Main.database.getJobInfo(currItem.getDbrefnum()));
-      if (currJob.getDbrefnum() <= 10 && currJob.getDbrefnum() != 4)
-      {
-         calCurrNum.setText("none");
-         calCurrAct.setText("none");
-         calCurrDept.setText("none");
-      }
-      else if (currJob.getDbrefnum() == 4)
-      {
-         calCurrNum.setText("Personal Item");
-         calCurrAct.setText("none");
-         calCurrDept.setText("none");
-      }
-      else
-      {
-         calCurrNum.setText(currJob.getProjectnumber());
-         calCurrAct.setText(currJob.getActivity());
-         calCurrDept.setText(currJob.getDept_client());
-      }
-      calNextCal.setText(currItem.getNextcalibrationdate().toString());
-      calComments.setText(currItem.getComments());
    }
    
    /**
@@ -603,8 +480,6 @@ public class deskAppController implements Initializable
       lastUpdate = System.currentTimeMillis();
       updateCheckedOut();
       updateCheckedIn();
-      updateCalibrations();
-      //updateCheckedOutAll();
       updatePastDue();
       refreshJobList();
    }
@@ -904,44 +779,6 @@ public class deskAppController implements Initializable
             break;
       }
    }
-   
-   @ FXML
-   /**
-    * checks in the item on the calibration page back into the database
-    */
-   public void checkInCalSelected()
-   {
-      String id = calCurrID.getText();
-      Equipment toCheckIn = new Equipment(Main.database.getItemInfo(id));
-      
-      if (toCheckIn.getDbrefnum() != 2)
-      {
-         WindowHandler.displayAlert("Error", "Cannot check in", "This item is currently not"
-               + " checked out for calibration or currently on a job, please use this button"
-               + " only for items which were calibrated off-site.");
-         return;
-      }
-      
-      String[] options = {"Check In"};
-      int choice = WindowHandler.displayConfirmDialog("Would you like to check in "
-            + calCurrID.getText() + " " + calCurrManu.getText() + " " + calCurrName.getText()
-            + " back into the database?",1,options);
-      if (choice == 1)
-      {
-         Main.database.updateItemCalibrationDate(toCheckIn);
-         Main.database.updateItemCheckIn(id);
-         Main.database.insertAudit(id, 2, "admin", Main.user);
-         WindowHandler.displayAlert("Confirmation", "Success", "Item was successfully"
-               + " added back to the database.");
-         refresh();
-      }
-      else
-      {
-         WindowHandler.displayAlert("Confirmation", "Failure"
-               , "The seleced item has NOT been checked in.");
-      }
-   }
-   
    
    @ FXML
    /**
@@ -1501,35 +1338,6 @@ public class deskAppController implements Initializable
       
    }
    
-   @ FXML
-   public void filterAuditTrail()
-   {
-      auditTrail.getItems().clear();
-      auditTrail.getItems().add("Loading...");
-      
-      ArrayList<String> audits = Main.database.getFilteredAudits(auditTrailFilterText.getText());
-      
-      auditTrail.getItems().clear();
-      auditTrail.getItems().addAll(audits);
-   }
-   
-   
-   @ FXML
-   /**
-    * refreshes and displays information on recent events within the database
-    */
-   public void refreshAuditTrail()
-   {
-      auditTrail.getItems().clear();
-      auditTrail.getItems().add("Loading...");
-      
-      ArrayList<String> audits = Main.database.getAudits();
-      
-      auditTrail.getItems().clear();
-      for (String s : audits)
-         auditTrail.getItems().add(s);
-   }
-   
    /**
     * updates the list of checked out items and selects the first item if possible
     */
@@ -1552,29 +1360,6 @@ public class deskAppController implements Initializable
       checkedOutList.getSelectionModel().select(0);
       
       setCurrInfo();
-   }
-   
-   /**
-    * displays equipment in need of calibration
-    */
-   private void updateCalibrations()
-   {
-      ArrayList<String> calibrations = new ArrayList<>()
-            ;
-      // find items with calibration date soon or passed
-      calibrations = Main.database.getItemsToCalibrate();
-      
-      // display these items on the GUI
-      calibrationList.getItems().clear();
-      for (String s : calibrations)
-         calibrationList.getItems().add(s);
-      
-      
-      ArrayList<Equipment> onCalibration = Main.database.getItemsForJob(2);
-      
-      calibrationOutList.getItems().clear();
-      for (Equipment e : onCalibration)
-         calibrationOutList.getItems().add(e.getId() + " " + e.getManufacturer() + " " + e.getName());
    }
    
    /**
