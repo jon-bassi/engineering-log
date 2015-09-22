@@ -243,37 +243,6 @@ public class EngDB
    }
    
    /**
-    * returns a set of all searchable strings in the database
-    * @return
-    */
-   public ArrayList<String> getAllStrings() 
-   {
-      try
-      {
-         String sql = "SELECT id,name,manufacturer FROM equipment WHERE 1";
-         ResultSet rs = runSql(sql);
-         
-         ArrayList<String> strings = new ArrayList<>();
-         while (rs.next())
-         {
-            for (int i = 0; i < rs.getMetaData().getColumnCount(); i++)
-            {
-               strings.add(rs.getString(i+1));
-            }
-         }
-         
-         return strings;
-      } catch (SQLException e)
-      {
-         ExceptionHandler.displayException(e);
-      } catch (Exception e)
-      {
-         ExceptionHandler.displayException(e);
-      }
-      return null;
-   }
-   
-   /**
     * returns the full name of a user based on their username
     * @param user
     * @return
@@ -538,44 +507,6 @@ public class EngDB
          }
          
          return item;
-      } catch (SQLException e)
-      {
-         ExceptionHandler.displayException(e);
-      } catch (Exception e)
-      {
-         ExceptionHandler.displayException(e);
-      }
-      return null;
-   }
-   
-   /**
-    * returns information for a specific item
-    * @return ArrayList of all users
-    */
-   public ArrayList<String> getItemsToCalibrate() 
-   {
-      try
-      {
-         // add 2 weeks to current date
-         Timestamp date = new Timestamp(System.currentTimeMillis() + 1209600000L);
-         
-         String sql = "SELECT id,manufacturer,name FROM equipment WHERE nextcalibrationdate <= '" + date + "' "
-               + "AND nextcalibrationdate > '2000-01-01 00:00:00' AND dbrefnum <> '2'";
-         ArrayList<String> items = new ArrayList<>();
-         ResultSet rs = runSql(sql);
-         
-         while (rs.next())
-         {
-            int cols = rs.getMetaData().getColumnCount();
-            String item = "";
-            for (int i = 0; i < cols; i++)
-            {
-               item += rs.getString(i+1) + " ";
-            }
-            item = item.substring(0, item.length()-1);
-            items.add(item);
-         }
-         return items;
       } catch (SQLException e)
       {
          ExceptionHandler.displayException(e);

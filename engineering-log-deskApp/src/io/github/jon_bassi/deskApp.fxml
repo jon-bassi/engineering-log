@@ -22,7 +22,6 @@
           <items>
             <MenuItem mnemonicParsing="false" onAction="#refresh" text="Refresh" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#editJob" text="Edit Job" />
             <MenuItem mnemonicParsing="false" onAction="#editItem" text="Edit Item" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#createBarcode" text="Create Barcode" />
@@ -249,7 +248,6 @@
                               <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -260,11 +258,6 @@
                             <Insets top="10.0" fx:id="x1" />
                           </GridPane.margin>
                         </Button>
-                                    <Button mnemonicParsing="false" onAction="#editSelected" text="Edit Selected" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                                       <GridPane.margin>
-                                          <Insets top="10.0" />
-                                       </GridPane.margin>
-                                    </Button>
                                  </children>
                               </GridPane>
                   </children>

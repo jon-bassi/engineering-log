@@ -27,7 +27,7 @@ public class Main extends Application
    
    public static EngDB database;
    
-   public static final String build = "1.3.0 beta";
+   public static final String build = "1.4.0-beta";
    
    private final boolean DEBUG = false;
    
@@ -55,6 +55,7 @@ public class Main extends Application
       // check user against user table
       // pull up list of users - note, later grab the full name as well so it can be placed into GUI
       ArrayList<String> users = database.getAllUsers();
+      users.remove("admin");
       if (!DEBUG)
       {
          showLogin(users);
@@ -95,7 +96,7 @@ public class Main extends Application
       int res = Integer.parseInt(result[0]);
       user = result[1].toLowerCase();
       
-      if (user == null || user.equals("") || res == 2)
+      if (user.equals("") || res == 2)
       {
          System.exit(0);
       }

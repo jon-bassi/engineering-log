@@ -58,6 +58,14 @@ public class WindowHandler
          {
             username.getSelectionModel().select((System.getProperty("user.name")));
          }
+         else
+         {
+            username.getSelectionModel().select(0);
+         }
+      }
+      else
+      {
+         username.getSelectionModel().select(0);
       }
       grid.add(new Label("Username:"), 0, 0);
       grid.add(username, 1, 0);
@@ -81,103 +89,6 @@ public class WindowHandler
       // cancel pressed or frame closed
       String[] toRet = {"2",""};
       return toRet;
-   }
-   
-   /**
-    * new user creation panel
-    * @return {user choice as String, username as String, full name as String, email as String}
-    */
-   public static String[] displayNewUserPane()
-   {
-      Alert alert = new Alert(AlertType.NONE);
-      alert.setTitle("Create New User");
-      alert.setHeaderText("Please fill in the following fields to create a new account...");
-      
-      GridPane grid = new GridPane();
-      grid.setHgap(10);
-      grid.setVgap(10);
-      grid.setPadding(new Insets(20, 150, 10, 10));
-
-      TextField username = new TextField();
-      username.setPromptText("Username:");
-      TextField fullname = new TextField();
-      fullname.setPromptText("First Last");
-      TextField email = new TextField();
-      email.setPromptText("First.Last@HDRinc.com");
-      
-      grid.add(new Label("Username:"), 0, 0);
-      grid.add(username, 1, 0);
-      grid.add(new Label("Full Name:"),0,1);
-      grid.add(fullname, 1, 1);
-      grid.add(new Label("Email:"), 0, 2);
-      grid.add(email, 1, 2);
-      
-      alert.getDialogPane().setContent(grid);
-      
-      Platform.runLater(() -> username.requestFocus());
-      
-      ButtonType submit = new ButtonType("Submit");
-      ButtonType cancel = new ButtonType("Cancel",ButtonData.CANCEL_CLOSE);
-      
-      alert.getButtonTypes().setAll(submit,cancel);
-      Optional<ButtonType> result = alert.showAndWait();
-      
-      String[] values = new String[4];
-      // submit pressed
-      if (result.get() == submit)
-      {
-         values[0] = "1";
-         values[1] = username.getText();
-         values[2] = fullname.getText();
-         values[3] = email.getText();
-         return values;
-         
-      }
-      // cancel pressed or frame closed
-      values[0] = "0";
-      return values;
-   }
-   
-   /**
-    * 
-    * @param info an array containing an int in index 0 and the username, full name, and 
-    * email in the following indices
-    * @return user's choice of button, 1 = yes, 2 = no, anything else = cancel
-    */
-   public static int displayConfirmUserPane(String[] info)
-   {
-      Alert alert = new Alert(AlertType.NONE);
-      alert.setTitle("Create New User");
-      alert.setHeaderText("Is the following information correct?");
-      
-      GridPane grid = new GridPane();
-      grid.setHgap(10);
-      grid.setVgap(10);
-      grid.setPadding(new Insets(20, 150, 10, 10));
-      
-      grid.add(new Label("Username:"), 0, 0);
-      grid.add(new Label(info[1]), 1, 0);
-      grid.add(new Label("Full Name:"), 0, 1);
-      grid.add(new Label(info[2]), 1, 1);
-      grid.add(new Label("Email:"), 0, 2);
-      grid.add(new Label(info[3]), 1, 2);
-      
-      alert.getDialogPane().setContent(grid);
-      
-      ButtonType yes = new ButtonType("Yes");
-      ButtonType no = new ButtonType("No");
-      ButtonType cancel = new ButtonType("Cancel",ButtonData.CANCEL_CLOSE);
-      
-      alert.getButtonTypes().setAll(yes,no,cancel);
-      Optional<ButtonType> result = alert.showAndWait();
-      
-      // yes pressed
-      if (result.get() == yes)
-         return 1;
-      if (result.get() == no)
-         return 2;
-      // cancel pressed or frame closed
-      return 0;
    }
    
    /**

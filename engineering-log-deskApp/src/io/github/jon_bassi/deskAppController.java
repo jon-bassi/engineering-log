@@ -557,47 +557,6 @@ public class deskAppController implements Initializable
             , "The seleced item's information was updated.");
    }
    
-   
-   @ FXML
-   /**
-    * Allows for the editing of information for a specific job
-    */
-   public void editJob()
-   {
-      Main.database.reconnect();
-      lastUpdate = System.currentTimeMillis();
-      
-      int dbrefnum = WindowHandler.displayJobChooser();
-      if (dbrefnum == -1 || (dbrefnum >= 0 && dbrefnum < 9))
-      {
-         WindowHandler.displayAlert("Error", "Job does not exist!", "The job number you"
-               + " have entered does not correspond to any job currently in the database,"
-               + " please try again.");
-         return;
-      }
-      Job toEdit = new Job();
-      try{
-      toEdit = new Job(Main.database.getJobInfo(dbrefnum));
-      toEdit.setEquipment(Main.database.getItemsForJob(toEdit.getDbrefnum()));
-      toEdit = WindowHandler.displayNewJobPane(toEdit);
-      } catch (Exception e)
-      {
-         e.printStackTrace();
-      }
-      if (!toEdit.isReady())
-      {
-         WindowHandler.displayAlert("Failure", "Job information was not changed"
-               , "Due to some error in the data (possibly a field left blank) the job"
-               + " selected was not edited. Please try again.");
-         return;
-      }
-      
-      Main.database.updateJobInfo(toEdit);
-      refresh();
-      WindowHandler.displayAlert("Confirmation", "Success"
-            , "The seleced job's information was updated.");
-   }
-   
    @ FXML
    /**
     * opens barcode creation page in ie
@@ -608,7 +567,7 @@ public class deskAppController implements Initializable
       int result = WindowHandler.displayConfirmDialog("Please read these instructions"
             + " before you continue.\n1. The barcode should be made up of a combination of an acronym"
             + " of the manufacturer name and equiment name, followed by the S/N of the equipment.\n"
-            + "2. The Barcode shall not be greater than 11 characters.\n3. The barcode shall"
+            + "2. The barcode shall not be greater than 11 characters.\n3. The barcode shall"
             + " only contain alpha-numeric characters (0-9,aA-zZ).\n4. If the equipment does"
             + " not have a S/N use an acronym for the manufacturer+name followed by 0001, incrementing"
             + " the number for each item of that type.\n5. The barcode shall be of the"
@@ -823,24 +782,6 @@ public class deskAppController implements Initializable
       {
          checkOutItem(id);
       }
-   }
-   
-   @ FXML
-   /**
-    * brings up edit item window for item from list on front page
-    */
-   public void editSelected()
-   {
-      Main.database.reconnect();
-      lastUpdate = System.currentTimeMillis();
-      
-      // get the data from the selected item - this shouldn't cause any errors and is
-      // faster than depending on which list is focused
-      String id = currID.getText();
-      
-      id = scanItem(id);
-      
-      editItem(id);
    }
    
    @ FXML
