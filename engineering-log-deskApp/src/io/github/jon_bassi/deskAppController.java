@@ -32,6 +32,7 @@ import javafx.stage.FileChooser;
  *        -add check in job (checks in all items in a job??)
  *        -strings file??
  *        -add list to check out that displays items
+ *        -add edit selected back to lite version?
  * @author jon-bassi
  *
  */
