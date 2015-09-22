@@ -243,37 +243,6 @@ public class EngDB
    }
    
    /**
-    * returns a set of all searchable strings in the database
-    * @return
-    */
-   public ArrayList<String> getAllStrings() 
-   {
-      try
-      {
-         String sql = "SELECT id,name,manufacturer FROM equipment WHERE 1";
-         ResultSet rs = runSql(sql);
-         
-         ArrayList<String> strings = new ArrayList<>();
-         while (rs.next())
-         {
-            for (int i = 0; i < rs.getMetaData().getColumnCount(); i++)
-            {
-               strings.add(rs.getString(i+1));
-            }
-         }
-         
-         return strings;
-      } catch (SQLException e)
-      {
-         ExceptionHandler.displayException(e);
-      } catch (Exception e)
-      {
-         ExceptionHandler.displayException(e);
-      }
-      return null;
-   }
-   
-   /**
     * returns the full name of a user based on their username
     * @param user
     * @return
