@@ -6,7 +6,11 @@ import io.github.jon_bassi.view.ExceptionHandler;
 import io.github.jon_bassi.view.ScanningHandler;
 import io.github.jon_bassi.view.WindowHandler;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -19,26 +23,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
 
 /**
  * TODO : -prepare for job type selection (items are a part of a type, types need a certain
  *         amount of items
- *        -make sure items which are broken are attributed to admin???
  *        -look at Check Out Item method for correct algorithm
  *        -add check in job (checks in all items in a job??)
  *        -strings file??
- *        -less text in boxes
- *        -show calibration date on front page
- *        -arrow keys don’t do anything on lists
- *        -new page for calibrations
- *        -add list to check out that displays items 
- *        -select all text in scan button, auto populate from with checked in items
- *        -current jobs tab - list of jobs, click on one,
- *         lists all items checked out to it in a different list, fields for job info and item info
- *        -manufacturer in lists
- *        -less words in popups more buttons
+ *        -add list to check out that displays items
  *        -one version has dropdown shows all users and new user button, everyone else doesn’t
- *        -calibrations to admin?
  * @author jon-bassi
  *
  */
@@ -55,6 +49,8 @@ public class deskAppController implements Initializable
    @ FXML
    private ListView<String> calibrationList;
    @ FXML
+   private ListView<String> calibrationOutList;
+   @ FXML
    private ListView<String> checkedOutAll;
    @ FXML
    private ListView<String> pastDueAll;
@@ -64,6 +60,8 @@ public class deskAppController implements Initializable
    private ListView<String> jobListJobs;
    @ FXML
    private ListView<String> jobListItems;
+   @ FXML
+   private ListView<String> auditTrail;
    
    // Home tab
    @ FXML
@@ -189,6 +187,10 @@ public class deskAppController implements Initializable
    @ FXML
    private TextArea jobListItemComments;
    
+   // Audit Trail tab
+   @ FXML
+   private TextField auditTrailFilterText;
+   
    @ Override
    /**
     * sets up GUI home page when opened, first method called, ignore args
@@ -202,18 +204,19 @@ public class deskAppController implements Initializable
       
       refreshJobList();
       
+      refreshAuditTrail();
+      
       // new thread for loading things not on the front page - won't stall the program on load
       // also include checks and updates here, updates can be tested once a week with current/next
       // update time stored in another database table
       runnable = new Runnable(){
          @Override
-         public void run()
+         public void run() throws IllegalStateException
          {
             // update other pages
             updateCalibrations();
             //updateCheckedOutAll();
             updatePastDue();
-            
             
             lastUpdate = System.currentTimeMillis();
             
@@ -366,7 +369,17 @@ public class deskAppController implements Initializable
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
       
-      String selected = calibrationList.getSelectionModel().getSelectedItem();
+      int list = 1;
+      
+      ArrayList<ListView<String>> lists = new ArrayList<>();
+      lists.add(calibrationList);
+      lists.add(calibrationOutList);
+      
+      // check which frame is selected
+      if (calibrationList.isFocused())
+         list = 0;
+      
+      String selected = lists.get(list).getSelectionModel().getSelectedItem();
       if (selected == null || selected.equals(""))
       {
          calCurrUser.setText("");
@@ -558,10 +571,10 @@ public class deskAppController implements Initializable
       {
          Main.database.disconnect();
          Scanner file = new Scanner(new File("paths.dat"));
-         String command = file.nextLine();
+         String cmd = file.nextLine();
          file.close();
          @SuppressWarnings("unused")
-         Process p = Runtime.getRuntime().exec(command);
+         Process p = Runtime.getRuntime().exec(cmd);
          System.exit(0);
       } catch (Exception e)
       {
@@ -710,6 +723,49 @@ public class deskAppController implements Initializable
             , "The seleced job's information was updated.");
    }
    
+   @ FXML
+   /**
+    * opens barcode creation page in ie
+    */
+   public void createBarcode()
+   {
+      String[] options = {"Ok"};
+      int result = WindowHandler.displayConfirmDialog("Please read these instructions"
+            + " before you continue.\n1. The barcode should be made up of a combination of an acronym"
+            + " of the manufacturer name and equiment name, followed by the S/N of the equipment.\n"
+            + "2. The Barcode shall not be greater than 11 characters.\n3. The barcode shall"
+            + " only contain alpha-numeric characters (0-9,aA-zZ).\n4. If the equipment does"
+            + " not have a S/N use an acronym for the manufacturer+name followed by 0001, incrementing"
+            + " the number for each item of that type.\n5. The barcode shall be of the"
+            + " format: \"Code 128\" X-dimension: \"2\" and contain human readable text.\n\n"
+            + "Place the barcode into the excel spreadsheet labeled barcodes and format so that"
+            + " they fit onto the barcode Avery Template 5160 labels.", 1, options);
+      if (result == 0)
+      {
+         return;
+      }
+      try
+      {
+         Scanner file = new Scanner(new File("paths.dat"));
+         file.nextLine();
+         String cmd = file.nextLine();
+         file.close();
+         
+         if (!System.getProperty("os.name").contains("Windows"))
+         {
+            return;
+         }
+         @SuppressWarnings("unused")
+         Process p = Runtime.getRuntime().exec(cmd);
+      } catch (FileNotFoundException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (IOException e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+   }
+   
    /**
     * displays the app info
     */
@@ -732,7 +788,7 @@ public class deskAppController implements Initializable
       
       String filterText = filterField.getText();
       
-      ArrayList<String> filteredItems = Main.database.getFilteredCheckdIn(filterText);
+      ArrayList<String> filteredItems = Main.database.getFilteredCheckedIn(filterText);
       
       checkedInList.getItems().clear();
       checkedInList.getItems().addAll(filteredItems);
@@ -798,28 +854,10 @@ public class deskAppController implements Initializable
             break;
             
          /**
-          * Out for Calibration
+          * Out for Calibration - shouldn't be called
           */
-         case 2 : String[] a2 = {"Continue"};
-            int choice2 = WindowHandler.displayConfirmDialog("This item is currently checked out for"
-                  + " calibration, if is no longer being calibrated please press Check In",1,a2);
-            // check back in
-            if (choice2 == 1)
-            {
-               Main.database.updateItemCalibrationDate(id);
-               Main.database.updateItemCheckIn(id);
-               Main.database.insertAudit(id, 2, Main.user, "admin");
-               refresh();
-               WindowHandler.displayAlert("Confirmation", "Success"
-                     , "The seleced item has been checked in.");
-            }
-            else
-            {
-               WindowHandler.displayAlert("Confirmation", "Failure"
-                     , "The seleced item has NOT been checked in.");
-            }
-            
-            break;
+         case 2 : 
+               break;
          /**
           * Lab Items, unused atm
           */
@@ -869,8 +907,45 @@ public class deskAppController implements Initializable
    
    @ FXML
    /**
+    * checks in the item on the calibration page back into the database
+    */
+   public void checkInCalSelected()
+   {
+      String id = calCurrID.getText();
+      Equipment toCheckIn = new Equipment(Main.database.getItemInfo(id));
+      
+      if (toCheckIn.getDbrefnum() != 2)
+      {
+         WindowHandler.displayAlert("Error", "Cannot check in", "This item is currently not"
+               + " checked out for calibration or currently on a job, please use this button"
+               + " only for items which were calibrated off-site.");
+         return;
+      }
+      
+      String[] options = {"Check In"};
+      int choice = WindowHandler.displayConfirmDialog("Would you like to check in "
+            + calCurrID.getText() + " " + calCurrManu.getText() + " " + calCurrName.getText()
+            + " back into the database?",1,options);
+      if (choice == 1)
+      {
+         Main.database.updateItemCalibrationDate(toCheckIn);
+         Main.database.updateItemCheckIn(id);
+         Main.database.insertAudit(id, 2, "admin", Main.user);
+         WindowHandler.displayAlert("Confirmation", "Success", "Item was successfully"
+               + " added back to the database.");
+         refresh();
+      }
+      else
+      {
+         WindowHandler.displayAlert("Confirmation", "Failure"
+               , "The seleced item has NOT been checked in.");
+      }
+   }
+   
+   
+   @ FXML
+   /**
     * checks out the selected item on the front page
-    * TODO : messages for items in preset jobs (1,2,3,4)
     */
    public void checkOutSelected()
    {
@@ -959,7 +1034,7 @@ public class deskAppController implements Initializable
    }
    
    /**
-    * TODO : get rid of big messages
+    * Checks out a single item
     * @param id
     */
    private void checkOutItem(String id)
@@ -972,27 +1047,38 @@ public class deskAppController implements Initializable
       // checking if the item needs calibration or is broken
       if (Main.database.checkEquipmentCalibration(id))
       {
-         String[] options = {"Continue","Send for Calibration"};
-         int result = WindowHandler.displayConfirmDialog("WARNING: this equipment is currently in need"
-               + " of calibration, if you can and will attend to the calibration before use"
-               + " on this job, please press continue. If this equipment needs to be sent out for"
-               + " calibration, press Send for Calibration and prepare the equipment to be sent."
-               + " If you wish to do niether of these options at the moment, please cancel."
-               , 2, options);
+         String[] options = {"Continue"};
+         int result = WindowHandler.displayConfirmDialog("NOTE: This item needs to be calibrated before"
+               + " being used in the field. Please continue to set the calibration up", 1, options);
          if (result == 0)
             return;
-         else if (result == 2)
+         else
          {
-            WindowHandler.displayAlert("Calibration", "Sending for Calibration"
-                  , "You have chose to send this equipment out for calibration, please take"
-                  + " the required measures to assure this happens smoothly and swiftly."
-                  + " During this time the item will be checked out to you under the calibration"
-                  + " job, when the item returns please select from the list of your checked"
-                  + " out items and check it into the database. Thank you.");
-            Main.database.updateItemToCalibration(id);
-            Main.database.insertAudit(id, 2, "admin", Main.user);
-            refresh();
-            return;
+            String[] cOptions = {"Calibrate Now","Send for Calibration"};
+            result = WindowHandler.displayConfirmDialog("If this equipment can be easily calibrated inhouse"
+                  + " press Calibrate Now, if it needs to be sent out, press Send for Calibration."
+                  , 2,cOptions);
+            if (result == 0)
+               return;
+            else if (result == 1)
+            {
+               Main.database.updateItemCalibrationDate(toCreate);
+               Main.database.insertAudit(id, 2, "admin", Main.user);
+               WindowHandler.displayAlert("Confirmation", "Success", "Item was successfully"
+                     + " calibrated.");
+               refresh();
+            }
+            else
+            {
+               Main.database.updateItemToCalibration(id);
+               Main.database.insertAudit(id, 2, Main.user, "admin");
+               WindowHandler.displayAlert("Confirmation", "Success", "Item was successfully"
+                     + " marked as out for calibration, please check in from the calibration"
+                     + " tab when it returns.");
+               return;
+            }
+            
+            
          }
       }
       if (Main.database.checkEquipmentBroken(id))
@@ -1158,8 +1244,7 @@ public class deskAppController implements Initializable
                + " in your job, they will be discarded.",s);
          WindowHandler.displayAlert("Invalid Scans", "Some of your scans are invalid..."
                , "One or more of the items scanned is currently broken, or in need of"
-               + " calibration. If this is not the case, please scan these items in"
-               + " seperately and read the directions on the messages displayed.");
+               + " calibration. Please scan these seperately.");
       }
       
       if (scans.size() < 1)
@@ -1301,6 +1386,54 @@ public class deskAppController implements Initializable
    
    @ FXML
    /**
+    * exports job info to CSV along with equipment in job
+    */
+   public void exportJob()
+   {
+      FileChooser chooser = new FileChooser();
+      FileChooser.ExtensionFilter ext = new FileChooser.ExtensionFilter("CSV", "*.csv");
+      chooser.getExtensionFilters().add(ext);
+      File file = chooser.showSaveDialog(null);
+      if (file == null)
+      {
+         WindowHandler.displayAlert("Failure", "File was not saved", "The data was not exported"
+               + " please try again");
+         return;
+      }
+      if (!file.getName().endsWith(".csv"))
+      {
+         file = new File(file.getAbsolutePath() + ".csv");
+      }
+      
+      try
+      {
+         
+         
+         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+         
+         writer.write(jobListNum.getText() + " " + jobListName.getText() +"\nDepartment:," + jobListDept.getText()
+               + "\nActivity:," + jobListAct.getText() + "\nDestination:," + jobListLocale.getText()
+               + "\nEquipment,Manufacturer,Name,Dimensions,Weight,Value\n");
+         ArrayList<Equipment> equipment = Main.database.getItemsForJob(Main.database.getJobDBrefnum(jobListNum.getText()));
+         for (Equipment e : equipment)
+         {
+            writer.write(e.getId() + "," + e.getManufacturer() + "," + e.getName() + ","
+                  + e.getDimensions() + "," + e.getWeight() + "lb,$" + String.format("%.2f", e.getValue()) + "\n");
+         }
+         
+         writer.close();
+         
+      } catch (IOException e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      
+      WindowHandler.displayAlert("Confirmation", "Success"
+            , "The job information was exported successfully.");
+   }
+   
+   @ FXML
+   /**
     * triggers when selecting a job in the jobList tab
     */
    public void selectJobJobList()
@@ -1336,6 +1469,8 @@ public class deskAppController implements Initializable
       jobListLocale.setText(job.getLocation());
       jobListComments.setText(job.getComments());
       
+      jobListItems.getSelectionModel().select(0);
+      selectItemJobList();
    }
    
    @FXML
@@ -1366,6 +1501,34 @@ public class deskAppController implements Initializable
       
    }
    
+   @ FXML
+   public void filterAuditTrail()
+   {
+      auditTrail.getItems().clear();
+      auditTrail.getItems().add("Loading...");
+      
+      ArrayList<String> audits = Main.database.getFilteredAudits(auditTrailFilterText.getText());
+      
+      auditTrail.getItems().clear();
+      auditTrail.getItems().addAll(audits);
+   }
+   
+   
+   @ FXML
+   /**
+    * refreshes and displays information on recent events within the database
+    */
+   public void refreshAuditTrail()
+   {
+      auditTrail.getItems().clear();
+      auditTrail.getItems().add("Loading...");
+      
+      ArrayList<String> audits = Main.database.getAudits();
+      
+      auditTrail.getItems().clear();
+      for (String s : audits)
+         auditTrail.getItems().add(s);
+   }
    
    /**
     * updates the list of checked out items and selects the first item if possible
@@ -1405,6 +1568,13 @@ public class deskAppController implements Initializable
       calibrationList.getItems().clear();
       for (String s : calibrations)
          calibrationList.getItems().add(s);
+      
+      
+      ArrayList<Equipment> onCalibration = Main.database.getItemsForJob(2);
+      
+      calibrationOutList.getItems().clear();
+      for (Equipment e : onCalibration)
+         calibrationOutList.getItems().add(e.getId() + " " + e.getManufacturer() + " " + e.getName());
    }
    
    /**
@@ -1419,23 +1589,6 @@ public class deskAppController implements Initializable
       pastDueAll.getItems().clear();
       for (String s : allPastDue)
          pastDueAll.getItems().add(s);
-   }
-   
-   @SuppressWarnings("unused")
-   @Deprecated
-   /**
-    * updates the list of all checked out items, personal items 
-    * TODO : delete
-    */
-   private void updateCheckedOutAll()
-   {
-      ArrayList<String> allCheckedOut = new ArrayList<>();
-      
-      allCheckedOut = Main.database.getAllCheckedOut();
-      
-      checkedOutAll.getItems().clear();
-      for (String s : allCheckedOut)
-         checkedOutAll.getItems().add(s);
    }
    
    /**

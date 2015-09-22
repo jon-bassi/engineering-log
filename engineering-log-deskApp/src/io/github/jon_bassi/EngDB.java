@@ -3,6 +3,7 @@ package io.github.jon_bassi;
 import io.github.jon_bassi.db.objects.Equipment;
 import io.github.jon_bassi.db.objects.Job;
 import io.github.jon_bassi.view.ExceptionHandler;
+import io.github.jon_bassi.view.WindowHandler;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -53,13 +54,16 @@ public class EngDB
          
       } catch (SQLException e)
       {
-         e.printStackTrace();
+         WindowHandler.displayAlert("Error", "Could not connect", "Check your internet connection"
+               + " and try again.");
       } catch (ClassNotFoundException e)
       {
-         e.printStackTrace();
+         WindowHandler.displayAlert("Error", "Could not connect", "Check your internet connection"
+               + " and try again.");
       } catch (IOException e)
       {
-         e.printStackTrace();
+         WindowHandler.displayAlert("Error", "Could not connect", "Check your internet connection"
+               + " and try again.");
       }
    }
    
@@ -359,7 +363,7 @@ public class EngDB
       try
       {
          String sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser"
-               + " = 'admin'";
+               + " = 'admin' AND dbrefnum = '0'";
          ArrayList<String> items = new ArrayList<>();
          ResultSet rs = runSql(sql);
          
@@ -380,12 +384,12 @@ public class EngDB
    }
    
    
-   public ArrayList<String> getFilteredCheckdIn(String filterText)
+   public ArrayList<String> getFilteredCheckedIn(String filterText)
    {
       try
       {
          String sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser"
-               + " = 'admin' AND (name LIKE '%" + filterText + "%' OR "
+               + " = 'admin' AND dbrefnum = '0' AND (name LIKE '%" + filterText + "%' OR "
                + " manufacturer LIKE '%" + filterText + "%' OR id LIKE '%" + filterText + "%')";
          ArrayList<String> items = new ArrayList<>();
          ResultSet rs = runSql(sql);
@@ -555,8 +559,8 @@ public class EngDB
          // add 2 weeks to current date
          Timestamp date = new Timestamp(System.currentTimeMillis() + 1209600000L);
          
-         String sql = "SELECT id,name FROM equipment WHERE nextcalibrationdate <= '" + date + "' "
-               + "AND nextcalibrationdate > '2000-01-01 00:00:00'";
+         String sql = "SELECT id,manufacturer,name FROM equipment WHERE nextcalibrationdate <= '" + date + "' "
+               + "AND nextcalibrationdate > '2000-01-01 00:00:00' AND dbrefnum <> '2'";
          ArrayList<String> items = new ArrayList<>();
          ResultSet rs = runSql(sql);
          
@@ -712,6 +716,69 @@ public class EngDB
    }
    
    /**
+    * retrieves the list of audits from our audit trail
+    */
+   public ArrayList<String> getAudits()
+   {
+      try
+      {
+         String sql = "SELECT * FROM englog ORDER BY datetime DESC";
+         
+         ResultSet rs = runSql(sql);
+         
+         ArrayList<String> results = new ArrayList<>();
+         while (rs.next())
+         {
+            Job j = new Job(getJobInfo(rs.getInt(2)));
+            results.add(rs.getString(8) + ": " + rs.getString(3) + " " + rs.getString(5)
+                  + " from " + rs.getString(6) + " to " + rs.getString(7) + " for "
+                  + j.getProjname());
+         }
+         return results;
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      
+      return null;
+   }
+   
+   
+   public ArrayList<String> getFilteredAudits(String filter)
+   {
+      try
+      {
+         String sql = "SELECT * FROM englog WHERE equipmentid LIKE"
+               + " '%" + filter + "%' OR projname LIKE '%" + filter + "%' OR equipmentname"
+               + " LIKE '%" + filter + "%' OR userfrom LIKE '%" + filter + "%' OR"
+               + " userto LIKE '%" + filter + "%' ORDER BY datetime DESC";
+         
+         ResultSet rs = runSql(sql);
+         
+         ArrayList<String> results = new ArrayList<>();
+         while (rs.next())
+         {
+            Job j = new Job(getJobInfo(rs.getInt(2)));
+            results.add(rs.getString(8) + ": " + rs.getString(3) + " " + rs.getString(5)
+                  + " from " + rs.getString(6) + " to " + rs.getString(7) + " for "
+                  + j.getProjname());
+         }
+         return results;
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      
+      return null;
+   }
+   
+   /**
     * sets the item's job to 0 and user to admin
     * @param id
     */
@@ -738,12 +805,13 @@ public class EngDB
     * sets the calibration date to the next calibration date based on current time
     * @param id the equipment barcode id
     */
-   public void updateItemCalibrationDate(String id) 
+   public void updateItemCalibrationDate(Equipment toEdit) 
    {
       try
       {
-         String sql = "Update equipment SET nextcalibrationdate = '" + new Date(System.currentTimeMillis())
-               + "' WHERE id = '" + id + "'";
+         String sql = "Update equipment SET nextcalibrationdate = '" 
+               + new Timestamp(toEdit.getCalibrationinterval()+ System.currentTimeMillis())
+               + "' WHERE id = '" + toEdit.getId() + "'";
          PreparedStatement stmt = con.prepareStatement(sql);
          stmt.execute();
       } catch (SQLException e)
@@ -763,7 +831,8 @@ public class EngDB
    {
       try
       {
-         PreparedStatement stmt = con.prepareStatement("UPDATE equipment SET dbrefnum = 2 WHERE id = (?)");
+         PreparedStatement stmt = con.prepareStatement("UPDATE equipment SET dbrefnum = '2'"
+               + ", currentuser = 'admin' WHERE id = (?)");
          stmt.setString(1, id);
          stmt.execute();
       } catch (SQLException e)
@@ -817,7 +886,8 @@ public class EngDB
          String sql = "UPDATE equipment SET dbrefnum = '"  + toEdit.getDbrefnum() + "'"
                + ", name = (?), manufacturer = (?), currentuser = (?), checkedout = (?)"
                + ", estimatedreturn = (?), comments = (?), calibrationinterval = (?)"
-               + ", nextcalibrationdate = (?) WHERE id = '" + toEdit.getId() + "'";
+               + ", nextcalibrationdate = (?), dimensions = (?), weight = (?)"
+               + ", value = (?) WHERE id = '" + toEdit.getId() + "'";
          
          PreparedStatement stmt = con.prepareStatement(sql);
          
@@ -832,6 +902,9 @@ public class EngDB
             stmt.setDate(8, new Date(0L));
          else
             stmt.setDate(8, toEdit.getNextcalibrationdate());
+         stmt.setString(9, toEdit.getDimensions());
+         stmt.setString(10,toEdit.getWeight());
+         stmt.setFloat(11, toEdit.getValue());
          
          stmt.executeUpdate();
       } catch (SQLException e)
@@ -1066,8 +1139,8 @@ public class EngDB
       try
       {
          String sql = "INSERT INTO equipment (id,dbrefnum,name,manufacturer,currentuser,"
-               + "checkedout,estimatedreturn,comments,calibrationinterval,nextcalibrationdate)"
-               + " VALUES (?,?,?,?,?,?,?,?,?,?)";
+               + "checkedout,estimatedreturn,comments,calibrationinterval,nextcalibrationdate"
+               + ",dimensions,weight,value) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
          
          PreparedStatement stmt = con.prepareStatement(sql);
          
@@ -1081,6 +1154,9 @@ public class EngDB
          stmt.setString(8, toCreate.getComments());
          stmt.setLong(9, toCreate.getCalibrationinterval());
          stmt.setDate(10, toCreate.getNextcalibrationdate());
+         stmt.setString(11, toCreate.getDimensions());
+         stmt.setString(12, toCreate.getWeight());
+         stmt.setFloat(13, toCreate.getValue());
          
          stmt.executeUpdate();
       } catch (SQLException e)

@@ -29,7 +29,7 @@ public class Main extends Application
    
    public static final String build = "1.3.0 beta";
    
-   private final Boolean DEBUG = false;
+   private final boolean DEBUG = false;
    
    public static void main(String[] args)
    {

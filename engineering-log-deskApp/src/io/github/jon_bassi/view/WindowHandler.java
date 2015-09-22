@@ -508,6 +508,60 @@ public class WindowHandler
          return toCreate;
       }
       
+      // TODO : add in shipping info
+      alert = new Alert(AlertType.NONE);
+      alert.setTitle("Create New Equipment");
+      alert.setHeaderText("Please fill in the following fields to create a new piece of equipment...");
+      
+      grid = new GridPane();
+      grid.setHgap(10);
+      grid.setVgap(10);
+      grid.setPadding(new Insets(20, 150, 10, 10));
+
+      TextField weight = new TextField(toEdit.getWeight());
+      weight.setPromptText("Equipment Weight");
+      TextField dimensions = new TextField(toEdit.getDimensions());
+      dimensions.setPromptText("Equipment Dimensions");
+      TextField value = new TextField("$" + String.format("%.2f",toEdit.getValue()));
+      value.setPromptText("Equipment Value");
+      
+      grid.add(new Label("Weight (lb):"), 0, 0);
+      grid.add(weight, 1, 0);
+      grid.add(new Label("Dimensions (include units):"), 0, 1);
+      grid.add(dimensions, 1, 1);
+      grid.add(new Label("Value ($)"), 0, 2);
+      grid.add(value, 1, 2);
+      
+      alert.getDialogPane().setContent(grid);
+      
+      Platform.runLater(() -> weight.requestFocus());
+      
+      submit = new ButtonType("Submit");
+      cancel = new ButtonType("Cancel",ButtonData.CANCEL_CLOSE);
+      
+      alert.getButtonTypes().setAll(submit,cancel);
+      result = alert.showAndWait();
+      
+      if (result.get() == submit)
+      {
+         toCreate.setWeight(weight.getText());
+         toCreate.setDimensions(dimensions.getText());
+         String valueText = value.getText().substring(1, value.getText().length());
+         toCreate.setValue(Float.parseFloat(valueText));
+         
+         if (!toCreate.checkFields())
+         {
+            toCreate.setReady(false);
+            return toCreate;
+         }
+      }
+      else
+      {
+         toCreate.setReady(false);
+         return toCreate;
+      }
+      
+      
       Alert alert2 = new Alert(AlertType.NONE);
       alert2.setTitle("Create New Equipment");
       alert2.setHeaderText("How often does the item need to be calibrated?\n(if it does not "

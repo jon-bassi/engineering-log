@@ -22,6 +22,9 @@ public class Equipment
    private String comments;
    private long calibrationinterval;
    private Date nextcalibrationdate;
+   private String dimensions;
+   private String weight;
+   private float value;
    
    private boolean isCheckedIn;
    private boolean isBroken;
@@ -40,6 +43,9 @@ public class Equipment
       comments = "";
       calibrationinterval = 0;
       nextcalibrationdate = new Date (0);
+      dimensions = "";
+      weight = "0";
+      value = 0.0f;
    }
    
    public Equipment(ArrayList<String> resultSet)
@@ -73,6 +79,9 @@ public class Equipment
       comments = resultSet.get(7);
       calibrationinterval = Long.parseLong(resultSet.get(8));
       nextcalibrationdate = Date.valueOf(resultSet.get(9));
+      dimensions = resultSet.get(10);
+      weight = resultSet.get(11);
+      value = Float.parseFloat(resultSet.get(12));
    }
    
    /**
@@ -156,6 +165,30 @@ public class Equipment
    }
    
    /**
+    * @return the dimensions
+    */
+   public String getDimensions()
+   {
+      return dimensions;
+   }
+   
+   /**
+    * @return the weight
+    */
+   public String getWeight()
+   {
+      return weight;
+   }
+   
+   /**
+    * @return the value ($$$)
+    */
+   public float getValue()
+   {
+      return value;
+   }
+   
+   /**
     * @param id the id to set
     */
    public void setId(String id)
@@ -235,6 +268,30 @@ public class Equipment
       this.nextcalibrationdate = nextcalibrationdate;
    }
 
+   /**
+    * @param dimensions the dimensions to set
+    */
+   public void setDimensions(String dimensions)
+   {
+      this.dimensions = dimensions;
+   }
+   
+   /**
+    * @param weight the weight to set
+    */
+   public void setWeight(String weight)
+   {
+      this.weight = weight;
+   }
+   
+   /**
+    * @param value the value to set ($$$)
+    */
+   public void setValue(Float value)
+   {
+      this.value = value;
+   }
+   
    /**
     * Sets the status of a piece of equipment, also changes dbrefnum and current user if
     * applicable
