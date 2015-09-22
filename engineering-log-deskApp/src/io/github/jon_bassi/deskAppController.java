@@ -32,7 +32,6 @@ import javafx.stage.FileChooser;
  *        -add check in job (checks in all items in a job??)
  *        -strings file??
  *        -add list to check out that displays items
- *        -one version has dropdown shows all users and new user button, everyone else doesn’t
  * @author jon-bassi
  *
  */
@@ -733,7 +732,7 @@ public class deskAppController implements Initializable
       int result = WindowHandler.displayConfirmDialog("Please read these instructions"
             + " before you continue.\n1. The barcode should be made up of a combination of an acronym"
             + " of the manufacturer name and equiment name, followed by the S/N of the equipment.\n"
-            + "2. The Barcode shall not be greater than 11 characters.\n3. The barcode shall"
+            + "2. The barcode shall not be greater than 11 characters.\n3. The barcode shall"
             + " only contain alpha-numeric characters (0-9,aA-zZ).\n4. If the equipment does"
             + " not have a S/N use an acronym for the manufacturer+name followed by 0001, incrementing"
             + " the number for each item of that type.\n5. The barcode shall be of the"
