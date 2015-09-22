@@ -1413,7 +1413,7 @@ public class deskAppController implements Initializable
          
          writer.write(jobListNum.getText() + " " + jobListName.getText() +"\nDepartment:," + jobListDept.getText()
                + "\nActivity:," + jobListAct.getText() + "\nDestination:," + jobListLocale.getText()
-               + "\nEquipment\n");
+               + "\nEquipment,Manufacturer,Name,Dimensions,Weight,Value\n");
          ArrayList<Equipment> equipment = Main.database.getItemsForJob(Main.database.getJobDBrefnum(jobListNum.getText()));
          for (Equipment e : equipment)
          {
