@@ -33,6 +33,12 @@ import javafx.stage.FileChooser;
  *        -strings file??
  *        -add list to check out that displays items
  *        -add edit selected back to lite version?
+ *        -Ubavalible Items tab - all checked out, all past due, al broken
+ *        -Fix audit trail dupes 2 mos storage, backup 1ce a month
+ *        -make checked in and checked out more visible
+ *        -calibration list shows both needed calibrations and all items that have dates
+ *         in order of when they are to be calibrated
+ *        -lookinto coloring text
  * @author jon-bassi
  *
  */
@@ -40,7 +46,6 @@ public class deskAppController implements Initializable
 {
    private long lastUpdate;
    private final long TIME_OUT = 900000;
-   private Runnable runnable;
    
    @ FXML
    private ListView<String> checkedOutList;
@@ -204,19 +209,33 @@ public class deskAppController implements Initializable
       
       refreshJobList();
       
-      refreshAuditTrail();
+      //refreshAuditTrail();
       
       // new thread for loading things not on the front page - won't stall the program on load
       // also include checks and updates here, updates can be tested once a week with current/next
       // update time stored in another database table
-      runnable = new Runnable(){
+      
+      Thread t = new Thread(new Runnable(){
          @Override
-         public void run() throws IllegalStateException
+         public void run()
          {
+            // I know this throws an illegal state exception but Platform.runLater won't
+            // allow the rest of the application to load, therefore a new thread is the only
+            // way, even if it throws an IllegalStateException
+            try {
+               // update other pages
+               updateCalibrations();
+               //updateCheckedOutAll();
+               updatePastDue();
+               refreshAuditTrail();
+            } catch (Exception e) {
+               System.out.println("NOT ON FX THREAD - ignore");
+            }
             // update other pages
             updateCalibrations();
             //updateCheckedOutAll();
             updatePastDue();
+            
             
             lastUpdate = System.currentTimeMillis();
             
@@ -246,11 +265,9 @@ public class deskAppController implements Initializable
                }
             }
          }
-      };
-      Thread thread = new Thread(runnable);
-      thread.start();
+      });
+      t.start();
    }
-   
    @ FXML
    /**
     * changes the information in the top-right info panel based on
@@ -272,7 +289,7 @@ public class deskAppController implements Initializable
          list = 0;
       
       String name = lists.get(list).getSelectionModel().getSelectedItem();
-      if (name == null || name.equals("Checked Out on Jobs") || name.equals("Personal  Items"))
+      if (name == null || name.equals("########## Checked Out on Jobs ##########") || name.equals("########## Personal Items ##########"))
       {
          currUser.setText("");
          currID.setText("");
@@ -1526,8 +1543,13 @@ public class deskAppController implements Initializable
       ArrayList<String> audits = Main.database.getAudits();
       
       auditTrail.getItems().clear();
+      try {
       for (String s : audits)
          auditTrail.getItems().add(s);
+      } catch (Exception e)
+      {
+         System.out.println("NOT ON FX THREAD - ignore");
+      }
    }
    
    /**
@@ -1611,8 +1633,8 @@ public class deskAppController implements Initializable
    private void setCurrInfo()
    {
       String name = checkedOutList.getSelectionModel().getSelectedItem();
-      if (name == null || name.equals("") || name.equals("Checked Out on Jobs")
-            || name.equals("Personal  Items"))
+      if (name == null || name.equals("") || name.equals("########## Checked Out on Jobs ##########")
+            || name.equals("########## Personal Items ##########"))
       {
          currUser.setText("");
          currID.setText("");

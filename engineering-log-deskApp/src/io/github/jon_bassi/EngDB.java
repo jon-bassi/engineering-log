@@ -282,8 +282,8 @@ public class EngDB
                + " AND dbrefnum <> '4'";
          ArrayList<String> items = new ArrayList<>();
          
-         items.add("Checked");
-         items.add("Jobs");
+         items.add("########## Checked");
+         items.add("Jobs ##########");
          items.add("Out on");
          
          ResultSet rs = runSql(sql);
@@ -296,9 +296,9 @@ public class EngDB
                items.add(rs.getString(i+1));
             }
          }
-         items.add("Personal");
+         items.add("########## Personal");
+         items.add("##########");
          items.add("Items");
-         items.add("");
          sql = "SELECT id,name,manufacturer FROM equipment WHERE currentuser = '" + Main.user + "'"
                + " AND dbrefnum = '4'";
          rs = runSql(sql);
@@ -1200,9 +1200,9 @@ public class EngDB
                }
             }
          }
-         items.add("Checked In");
+         items.add("########## CHECKED IN ##########");
          items.addAll(checkedInItems);
-         items.add("Checked Out");
+         items.add("########## CHECKED OUT ##########");
          items.addAll(checkedOutItems);
          
          return items;
