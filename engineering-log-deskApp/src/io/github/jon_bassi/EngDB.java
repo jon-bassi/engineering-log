@@ -418,7 +418,35 @@ public class EngDB
       {
          String sql = "SELECT id,name,manufacturer FROM equipment WHERE estimatedreturn"
                + " <= '" + new Date(System.currentTimeMillis()) + "' AND estimatedreturn"
-               + " > '" + new Date(0) + "'";
+               + " > '" + new Date(0) + "' AND dbrefnum > '10'";
+         ArrayList<String> items = new ArrayList<>();
+         ResultSet rs = runSql(sql);
+         
+         while (rs.next())
+         {
+            items.add(rs.getString(1) + " " + rs.getString(3) + " " + rs.getString(2));
+         }
+         
+         return items;
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      return null;
+   }
+   
+   /**
+    * returns a list of all items checked out longer than they were supposed to be
+    * @return
+    */
+   public ArrayList<String> getAllBroken() 
+   {
+      try
+      {
+         String sql = "SELECT id,name,manufacturer FROM equipment WHERE dbrefnum = '1'";
          ArrayList<String> items = new ArrayList<>();
          ResultSet rs = runSql(sql);
          

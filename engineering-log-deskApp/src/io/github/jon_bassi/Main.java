@@ -93,16 +93,13 @@ public class Main extends Application
          Parent root = FXMLLoader.load(getClass().getResource("/io/github/jon_bassi/deskApp.fxml"));
          primaryStage.setTitle(user + " - Engineering Equipment Database");
          Scene scene = new Scene(root,1150,720);
-         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() 
-         {
-            public void handle(WindowEvent we){
-               try {
-                  System.exit(0);
-                 } catch (Exception e) {
-                    ExceptionHandler.displayException(e);
-                    System.exit(0);
-                 }
-             }
+         primaryStage.setOnCloseRequest(we -> {
+            try {
+               System.exit(0);
+              } catch (Exception e) {
+                 ExceptionHandler.displayException(e);
+                 System.exit(0);
+              }
           });
          primaryStage.setScene(scene);
          primaryStage.show();

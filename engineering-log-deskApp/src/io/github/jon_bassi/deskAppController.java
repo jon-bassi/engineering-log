@@ -19,11 +19,9 @@ import java.util.TreeSet;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+
 
 /**
  * TODO : -prepare for job type selection (items are a part of a type, types need a certain
@@ -57,6 +55,8 @@ public class deskAppController implements Initializable
    private ListView<String> calibrationOutList;
    @ FXML
    private ListView<String> checkedOutAll;
+   @ FXML
+   private ListView<String> brokenList;
    @ FXML
    private ListView<String> pastDueAll;
    @ FXML
@@ -161,6 +161,11 @@ public class deskAppController implements Initializable
    private Label searchAct;
    @ FXML
    private TextArea searchComments;
+
+   @ FXML
+   private TextArea jobNumberField;
+   @ FXML
+   private ComboBox<String> testingTypes;
    
    // JobList tab
    @ FXML
@@ -206,63 +211,55 @@ public class deskAppController implements Initializable
    {
       updateCheckedOut();
       updateCheckedIn();
-      
       refreshJobList();
-      
-      //refreshAuditTrail();
+      refreshAuditTrail();
+      loadTests();
       
       // new thread for loading things not on the front page - won't stall the program on load
       // also include checks and updates here, updates can be tested once a week with current/next
       // update time stored in another database table
       
-      Thread t = new Thread(new Runnable(){
-         @Override
-         public void run()
+      Thread t = new Thread(() -> {
+         // I know this throws an illegal state exception but Platform.runLater won't
+         // allow the rest of the application to load, therefore a new thread is the only
+         // way, even if it throws an IllegalStateException
+         // update other pages
+         System.out.println("Ignore the following illegal state exceptions");
+         updateCalibrations();
+         updateCheckedOutAll();
+         updateBroken();
+         updatePastDue();
+         // update other pages
+         updateCalibrations();
+         //updateCheckedOutAll();
+         updatePastDue();
+
+
+         lastUpdate = System.currentTimeMillis();
+
+         // this loop here keeps track of the time of the last performed action
+         // disconnecting the database connection after the number of seconds
+         // given by TIME_OUT
+         while(true)
          {
-            // I know this throws an illegal state exception but Platform.runLater won't
-            // allow the rest of the application to load, therefore a new thread is the only
-            // way, even if it throws an IllegalStateException
-            try {
-               // update other pages
-               updateCalibrations();
-               //updateCheckedOutAll();
-               updatePastDue();
-               refreshAuditTrail();
-            } catch (Exception e) {
-               System.out.println("NOT ON FX THREAD - ignore");
-            }
-            // update other pages
-            updateCalibrations();
-            //updateCheckedOutAll();
-            updatePastDue();
-            
-            
-            lastUpdate = System.currentTimeMillis();
-            
-            // this loop here keeps track of the time of the last performed action
-            // disconnecting the database connection after the number of seconds
-            // given by TIME_OUT
-            while(true)
+            long delta = System.currentTimeMillis() - lastUpdate;
+            if (delta >= TIME_OUT)
             {
-               long delta = System.currentTimeMillis() - lastUpdate;
-               if (delta >= TIME_OUT)
-               {
-                  try
-                  {
-                     Main.database.disconnect();
-                  } catch (Exception e)
-                  {
-                     e.printStackTrace();
-                  }
-               }
-               
                try
                {
-                  Thread.sleep(5000);
-               } catch (InterruptedException e)
+                  Main.database.disconnect();
+               } catch (Exception e)
                {
                   e.printStackTrace();
                }
+            }
+
+            try
+            {
+               Thread.sleep(5000);
+            } catch (InterruptedException e)
+            {
+               e.printStackTrace();
             }
          }
       });
@@ -1543,13 +1540,8 @@ public class deskAppController implements Initializable
       ArrayList<String> audits = Main.database.getAudits();
       
       auditTrail.getItems().clear();
-      try {
       for (String s : audits)
          auditTrail.getItems().add(s);
-      } catch (Exception e)
-      {
-         System.out.println("NOT ON FX THREAD - ignore");
-      }
    }
    
    /**
@@ -1628,6 +1620,58 @@ public class deskAppController implements Initializable
    }
    
    /**
+    * updates the list of all checked out items on the unavailable items tab
+    */
+   private void updateCheckedOutAll()
+   {
+      ArrayList<String> checkedOut = new ArrayList<>();
+      
+      checkedOut = Main.database.getAllCheckedOut();
+      
+      checkedOutAll.getItems().clear();
+      for (String s : checkedOut)
+         checkedOutAll.getItems().add(s);
+   }
+   
+   /**
+    * updates the list of all broken items on the unavailable items tab
+    */
+   private void updateBroken()
+   {
+      ArrayList<String> broken = new ArrayList<>();
+      
+      broken = Main.database.getAllBroken();
+      
+      brokenList.getItems().clear();
+      for (String s : broken)
+         brokenList.getItems().add(s);
+   }
+
+   /**
+    * loads tests on the search tab from tests.txt
+    */
+   private void loadTests()
+   {
+      Scanner file = null;
+      try
+      {
+         file = new Scanner(new File("tests.txt"));
+      } catch (IOException e)
+      {
+         e.printStackTrace();
+      }
+
+      ArrayList<String> tests = new ArrayList<>();
+      while (file.hasNext())
+      {
+         tests.add(file.nextLine());
+      }
+      file.close();
+
+      testingTypes.getItems().addAll(tests);
+   }
+   
+   /**
     * sets info on startup (workaround because it stays as placeholder text for some reason)
     */
    private void setCurrInfo()
@@ -1702,7 +1746,7 @@ public class deskAppController implements Initializable
    
    /**
     * Calls the GUI for the creation of new equipment
-    * @param id
+    * @param Equipment
     * @return
     */
    private Equipment createNewItem(Equipment toCreate)
