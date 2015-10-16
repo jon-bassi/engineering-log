@@ -31,12 +31,12 @@ import javafx.stage.FileChooser;
  *        -strings file??
  *        -add list to check out that displays items
  *        -add edit selected back to lite version?
- *        -Ubavalible Items tab - all checked out, all past due, al broken
  *        -Fix audit trail dupes 2 mos storage, backup 1ce a month
  *        -make checked in and checked out more visible
  *        -calibration list shows both needed calibrations and all items that have dates
  *         in order of when they are to be calibrated
- *        -lookinto coloring text
+ *        -look into coloring text
+ *        -add all tests to their own table - ability to add tests
  * @author jon-bassi
  *
  */
@@ -163,9 +163,13 @@ public class deskAppController implements Initializable
    private TextArea searchComments;
 
    @ FXML
-   private TextArea jobNumberField;
+   private TextField jobNumberField;
    @ FXML
    private ComboBox<String> testingTypes;
+   @ FXML
+   private ListView<String> equipmentForTest;
+   @ FXML
+   private ListView<String> equipmentForJob;
    
    // JobList tab
    @ FXML
@@ -373,7 +377,20 @@ public class deskAppController implements Initializable
       searchResults.getSelectionModel().select(1);
       setSearchedInfo();
    }
-   
+
+   @ FXML
+   /**
+    * finds equipment in the database used in the test selected
+    */
+   public void equipmentFind()
+   {
+      ArrayList<String> equipment = Main.database.getEquipmentForTest(
+            testingTypes.getSelectionModel().getSelectedItem());
+
+      equipmentForTest.getItems().clear();
+      equipmentForTest.getItems().addAll(equipment);
+   }
+
    @ FXML
    /**
     * sets the info for the selected items on the checked out (all) page
@@ -454,14 +471,30 @@ public class deskAppController implements Initializable
    }
    
    /**
-    * sets the info for the selected items on the past due page
+    * sets the info for the selected items on the unavailable tab, includes past due box, all checked out and broken
     */
    public void setPastDueInfo()
    {
       Main.database.reconnect();
       lastUpdate = System.currentTimeMillis();
       
-      String selected = pastDueAll.getSelectionModel().getSelectedItem();
+      ArrayList<ListView<String>> lists = new ArrayList<>();
+      lists.add(pastDueAll);
+      lists.add(checkedOutAll);
+      lists.add(brokenList);
+
+      int list = 0;
+      if (checkedOutAll.isFocused())
+      {
+         list = 1;
+      }
+      else if (brokenList.isFocused())
+      {
+         list = 2;
+      }
+
+
+      String selected = lists.get(list).getSelectionModel().getSelectedItem();
       if (selected == null || selected.equals(""))
       {
          pastDueCurrUser.setText("");
@@ -1543,7 +1576,43 @@ public class deskAppController implements Initializable
       for (String s : audits)
          auditTrail.getItems().add(s);
    }
-   
+
+   @ FXML
+   /**
+    * moves the equipment from the equipment list for a test to the check out list for a job
+    */
+   public void moveEquipmentToJob()
+   {
+      // do contains on list before moving so no weird duplicates
+      String equipment = equipmentForTest.getSelectionModel().getSelectedItem();
+      if (equipment == null || equipment.equals(null))
+         return;
+      equipmentForTest.getItems().remove(equipment);
+
+      if (!equipmentForJob.getItems().contains(equipment))
+      {
+         equipmentForJob.getItems().add(equipment);
+      }
+   }
+
+   @ FXML
+   /**
+    * moves equipment from the check out list for a job back to the equipment list for a test
+    */
+   public void moveEquipmentToTest()
+   {
+      // do contains before adding back to this one so no weird duplicates
+      String equipment = equipmentForJob.getSelectionModel().getSelectedItem();
+      if (equipment == null || equipment.equals(null))
+         return;
+      equipmentForJob.getItems().remove(equipment);
+
+      if (!equipmentForTest.getItems().contains(equipment))
+      {
+         equipmentForTest.getItems().add(equipment);
+      }
+   }
+
    /**
     * updates the list of checked out items and selects the first item if possible
     */
@@ -1577,7 +1646,9 @@ public class deskAppController implements Initializable
             ;
       // find items with calibration date soon or passed
       calibrations = Main.database.getItemsToCalibrate();
-      
+
+      // set to monotype font??
+
       // display these items on the GUI
       calibrationList.getItems().clear();
       for (String s : calibrations)
@@ -1669,6 +1740,7 @@ public class deskAppController implements Initializable
       file.close();
 
       testingTypes.getItems().addAll(tests);
+      testingTypes.getSelectionModel().select(0);
    }
    
    /**
@@ -1746,7 +1818,7 @@ public class deskAppController implements Initializable
    
    /**
     * Calls the GUI for the creation of new equipment
-    * @param Equipment
+    * @param toCreate
     * @return
     */
    private Equipment createNewItem(Equipment toCreate)

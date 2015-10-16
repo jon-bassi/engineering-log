@@ -427,16 +427,16 @@
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Button mnemonicParsing="false" text="&gt;" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                                          <Button mnemonicParsing="false" text="&lt;" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                                          <Button mnemonicParsing="false" onAction="#moveEquipmentToJob" text="&gt;" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                          <Button mnemonicParsing="false" onAction="#moveEquipmentToTest" text="&lt;" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                                        </children>
                                     </GridPane>
-                                    <ListView prefHeight="200.0" prefWidth="200.0">
+                                    <ListView fx:id="equipmentForTest" prefHeight="200.0" prefWidth="200.0">
                                        <GridPane.margin>
                                           <Insets bottom="10.0" />
                                        </GridPane.margin>
                                     </ListView>
-                                    <ListView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+                                    <ListView fx:id="equipmentForJob" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
                                        <GridPane.margin>
                                           <Insets bottom="10.0" />
                                        </GridPane.margin>
@@ -480,7 +480,7 @@
                                           <Insets right="7.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Button mnemonicParsing="false" text="Find" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                                    <Button mnemonicParsing="false" onAction="#equipmentFind" text="Find" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                                        <GridPane.margin>
                                           <Insets right="10.0" />
                                        </GridPane.margin>
@@ -864,12 +864,12 @@
                       </rowConstraints>
                     </GridPane>
                               <Label text="Past Due Items" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM" />
-                              <ListView fx:id="checkedOutAll" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3">
+                              <ListView fx:id="checkedOutAll" onKeyReleased="#setPastDueInfo" onMouseClicked="#setPastDueInfo" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3">
                                  <GridPane.margin>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </GridPane.margin>
                               </ListView>
-                              <ListView fx:id="brokenList" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <ListView fx:id="brokenList" onKeyReleased="#setPastDueInfo" onMouseClicked="#setPastDueInfo" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <GridPane.margin>
                                     <Insets bottom="10.0" left="58.0" right="10.0" top="10.0" />
                                  </GridPane.margin>

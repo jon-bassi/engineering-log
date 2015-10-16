@@ -16,10 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * 
@@ -556,21 +553,22 @@ public class EngDB
          // add 2 weeks to current date
          Timestamp date = new Timestamp(System.currentTimeMillis() + 1209600000L);
          
-         String sql = "SELECT id,manufacturer,name FROM equipment WHERE nextcalibrationdate <= '" + date + "' "
+         String sql = "SELECT id,manufacturer,name,nextcalibrationdate FROM equipment WHERE nextcalibrationdate <= '" + date + "' "
                + "AND nextcalibrationdate > '2000-01-01 00:00:00' AND dbrefnum <> '2'";
          ArrayList<String> items = new ArrayList<>();
          ResultSet rs = runSql(sql);
-         
+
+         StringBuilder sb = new StringBuilder();
+         Formatter formatter = new Formatter(sb, Locale.US);
+
+
+
          while (rs.next())
          {
-            int cols = rs.getMetaData().getColumnCount();
-            String item = "";
-            for (int i = 0; i < cols; i++)
-            {
-               item += rs.getString(i+1) + " ";
-            }
-            item = item.substring(0, item.length()-1);
-            items.add(item);
+            String name = rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3);
+            formatter.format("%-100s %30s",name,rs.getString(4));
+            items.add(sb.toString());
+            sb.setLength(0);
          }
          return items;
       } catch (SQLException e)
@@ -774,7 +772,43 @@ public class EngDB
       
       return null;
    }
-   
+
+   /**
+    * returns all the equipment which is used in the given test
+    * @param test
+    * @return
+    */
+   public ArrayList<String> getEquipmentForTest(String test)
+   {
+      try
+      {
+
+         test = test.toLowerCase();
+         test = test.replace("-", "");
+         test = test.replace("/","");
+         test = test.replace(" ","");
+         String sql = "SELECT id,name,manufacturer FROM equipment WHERE " + test + " = 1";
+
+         ArrayList<String> items = new ArrayList<>();
+         ResultSet rs = runSql(sql);
+
+         while (rs.next())
+         {
+            items.add(rs.getString(1) + " " + rs.getString(3) + " " + rs.getString(2));
+         }
+
+         return items;
+      } catch (SQLException e)
+      {
+         ExceptionHandler.displayException(e);
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+      return null;
+
+   }
+
    /**
     * sets the item's job to 0 and user to admin
     * @param id
