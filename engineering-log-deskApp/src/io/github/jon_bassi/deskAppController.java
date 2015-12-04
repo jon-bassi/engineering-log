@@ -12,10 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.ResourceBundle;
-import java.util.Scanner;
-import java.util.TreeSet;
+import java.util.*;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -44,7 +41,9 @@ public class deskAppController implements Initializable
 {
    private long lastUpdate;
    private final long TIME_OUT = 900000;
-   
+
+   private HashMap<String, ArrayList<String>> tests;
+
    @ FXML
    private ListView<String> checkedOutList;
    @ FXML
@@ -384,9 +383,25 @@ public class deskAppController implements Initializable
     */
    public void equipmentFind()
    {
-      ArrayList<String> equipment = Main.database.getEquipmentForTest(
-            testingTypes.getSelectionModel().getSelectedItem());
+      String test = testingTypes.getSelectionModel().getSelectedItem();
 
+      Scanner file = null;
+      try
+      {
+         file = new Scanner(new File("tests/" + test + ".dat"));
+      } catch (Exception e)
+      {
+         ExceptionHandler.displayException(e);
+      }
+
+      ArrayList<String> equipment = new ArrayList<>();
+
+      while (file.hasNext())
+      {
+         equipment.add(file.nextLine());
+      }
+
+      file.close();
       equipmentForTest.getItems().clear();
       equipmentForTest.getItems().addAll(equipment);
    }
@@ -1648,6 +1663,8 @@ public class deskAppController implements Initializable
       calibrations = Main.database.getItemsToCalibrate();
 
       // set to monotype font??
+      calibrationList.setStyle("-fx-font-size: 14px;"
+                                     + "-fx-font-family: monospace;");
 
       // display these items on the GUI
       calibrationList.getItems().clear();
@@ -1719,14 +1736,14 @@ public class deskAppController implements Initializable
    }
 
    /**
-    * loads tests on the search tab from tests.txt
+    * loads tests on the search tab from tests.dat
     */
    private void loadTests()
    {
       Scanner file = null;
       try
       {
-         file = new Scanner(new File("tests.txt"));
+         file = new Scanner(new File("tests/tests.dat"));
       } catch (IOException e)
       {
          e.printStackTrace();

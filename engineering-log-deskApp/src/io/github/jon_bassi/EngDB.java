@@ -553,8 +553,9 @@ public class EngDB
          // add 2 weeks to current date
          Timestamp date = new Timestamp(System.currentTimeMillis() + 1209600000L);
          
-         String sql = "SELECT id,manufacturer,name,nextcalibrationdate FROM equipment WHERE nextcalibrationdate <= '" + date + "' "
-               + "AND nextcalibrationdate > '2000-01-01 00:00:00' AND dbrefnum <> '2'";
+         String sql = "SELECT id,manufacturer,name,nextcalibrationdate FROM equipment WHERE nextcalibrationdate > '1969-12-31'" +
+               " ORDER BY nextcalibrationdate ASC";
+         // ORDER BY datetime DESC
          ArrayList<String> items = new ArrayList<>();
          ResultSet rs = runSql(sql);
 
@@ -566,7 +567,7 @@ public class EngDB
          while (rs.next())
          {
             String name = rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3);
-            formatter.format("%-100s %30s",name,rs.getString(4));
+            formatter.format("%-61s %s",name,rs.getString(4));
             items.add(sb.toString());
             sb.setLength(0);
          }
